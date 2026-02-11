@@ -1,0 +1,74 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06070d"/>
+      <stop offset="100%" style="stop-color:#0a0c16"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c5cfc"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f0f4f8"/>
+      <stop offset="60%" style="stop-color:#c4cdd8"/>
+      <stop offset="100%" style="stop-color:#7b8a9e"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="20%" cy="30%" r="40%">
+      <stop offset="0%" style="stop-color:rgba(124,92,252,0.15)"/>
+      <stop offset="100%" style="stop-color:rgba(124,92,252,0)"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="80%" cy="20%" r="35%">
+      <stop offset="0%" style="stop-color:rgba(6,182,212,0.1)"/>
+      <stop offset="100%" style="stop-color:rgba(6,182,212,0)"/>
+    </radialGradient>
+    <radialGradient id="glow3" cx="60%" cy="80%" r="30%">
+      <stop offset="0%" style="stop-color:rgba(244,63,94,0.08)"/>
+      <stop offset="100%" style="stop-color:rgba(244,63,94,0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow1)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+  <rect width="1200" height="630" fill="url(#glow3)"/>
+
+  <!-- Logo icon -->
+  <rect x="80" y="80" width="56" height="56" rx="16" fill="url(#accent)"/>
+  <circle cx="108" cy="108" r="8" fill="white" fill-opacity="0.9"/>
+  <line x1="108" y1="88" x2="108" y2="95" stroke="white" stroke-width="3" stroke-linecap="round" stroke-opacity="0.6"/>
+  <line x1="108" y1="121" x2="108" y2="128" stroke="white" stroke-width="3" stroke-linecap="round" stroke-opacity="0.6"/>
+  <line x1="88" y1="108" x2="95" y2="108" stroke="white" stroke-width="3" stroke-linecap="round" stroke-opacity="0.6"/>
+  <line x1="121" y1="108" x2="128" y2="108" stroke="white" stroke-width="3" stroke-linecap="round" stroke-opacity="0.6"/>
+
+  <!-- Logo text -->
+  <text x="152" y="118" font-family="Inter, -apple-system, sans-serif" font-size="28" font-weight="800" fill="#f0f4f8">Research Radar</text>
+
+  <!-- Main headline -->
+  <text x="80" y="260" font-family="Georgia, 'Playfair Display', serif" font-size="64" font-weight="900" fill="url(#textGrad)">Discover Research</text>
+  <text x="80" y="340" font-family="Georgia, 'Playfair Display', serif" font-size="64" font-weight="900" fill="url(#textGrad)">That Matters</text>
+
+  <!-- Subtitle -->
+  <text x="80" y="400" font-family="Inter, sans-serif" font-size="22" fill="#7b8a9e">Live papers ranked by citation impact. Powered by OpenAlex.</text>
+
+  <!-- Topic pills -->
+  <rect x="80" y="450" width="180" height="36" rx="18" fill="rgba(124,92,252,0.12)" stroke="rgba(124,92,252,0.25)" stroke-width="1"/>
+  <text x="115" y="474" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#9b85ff">High-Entropy Alloys</text>
+
+  <rect x="276" y="450" width="160" height="36" rx="18" fill="rgba(6,182,212,0.12)" stroke="rgba(6,182,212,0.25)" stroke-width="1"/>
+  <text x="303" y="474" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#06b6d4">Electrocatalysis</text>
+
+  <rect x="452" y="450" width="160" height="36" rx="18" fill="rgba(59,130,246,0.12)" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
+  <text x="481" y="474" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#3b82f6">ML for Materials</text>
+
+  <rect x="628" y="450" width="140" height="36" rx="18" fill="rgba(244,63,94,0.12)" stroke="rgba(244,63,94,0.25)" stroke-width="1"/>
+  <text x="658" y="474" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#f43f5e">AI in Science</text>
+
+  <!-- Live badge -->
+  <rect x="1020" y="85" width="100" height="30" rx="15" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.2)" stroke-width="1"/>
+  <circle cx="1045" cy="100" r="4" fill="#10b981"/>
+  <text x="1057" y="106" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#10b981" letter-spacing="1">LIVE</text>
+
+  <!-- Bottom border accent -->
+  <rect x="0" y="626" width="1200" height="4" fill="url(#accent)"/>
+</svg>
