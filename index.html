@@ -328,10 +328,7 @@ function updateSignalTabs() {
 function computeSignalCounts(papers) {
   return [
     papers.length,
-    papers.filter(p => p.isFastest).length,
-    papers.filter(p => p.isCrossField).length,
     papers.filter(p => p.isMethod).length,
-    papers.filter(p => p.isReview).length,
   ];
 }
 
@@ -339,10 +336,7 @@ function applySignalFilter() {
   updateSignalTabs();
   const sig = SIGNALS[activeSignal].id;
   if (sig === 'all') filteredPapers = [...allPapers];
-  else if (sig === 'fastest') filteredPapers = allPapers.filter(p => p.isFastest);
-  else if (sig === 'cross') filteredPapers = allPapers.filter(p => p.isCrossField);
   else if (sig === 'methods') filteredPapers = allPapers.filter(p => p.isMethod);
-  else if (sig === 'reviews') filteredPapers = allPapers.filter(p => p.isReview);
   filteredPapers.sort((a, b) => b.velocity - a.velocity);
   renderTabloid(filteredPapers);
 }
