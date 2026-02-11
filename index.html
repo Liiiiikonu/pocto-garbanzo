@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Radar — Live Materials Science Feed</title>
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --surface: #131926;
+    --surface2: #1a2236;
+    --border: #252f45;
+    --text: #e2e8f0;
+    --text-muted: #8892a8;
+    --accent: #38bdf8;
+    --accent-glow: rgba(56, 189, 248, 0.15);
+    --green: #34d399;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --radius: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: var(--surface);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+
+  .logo svg { flex-shrink: 0; }
+
+  .api-section {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .api-section input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: .45rem .75rem;
+    border-radius: var(--radius);
+    font-size: .85rem;
+    width: 280px;
+    transition: border-color .2s;
+  }
+
+  .api-section input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .api-status {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--red);
+    transition: background .3s;
+    flex-shrink: 0;
+  }
+
+  .api-status.connected { background: var(--green); }
+
+  /* ── Main layout ── */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .intro {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .intro h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: .35rem;
+  }
+
+  .intro p {
+    color: var(--text-muted);
+    font-size: .95rem;
+  }
+
+  /* ── Topic pills ── */
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .pill {
+    padding: .5rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: .875rem;
+    cursor: pointer;
+    transition: all .2s;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .pill:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  .pill.active {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .pill:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+  }
+
+  /* ── Feed ── */
+  #feed {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    transition: border-color .2s;
+    animation: fadeUp .35s ease both;
+  }
+
+  .card:hover { border-color: var(--accent); }
+
+  .card-topic {
+    display: inline-block;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--accent);
+    margin-bottom: .5rem;
+  }
+
+  .card h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: .35rem;
+    line-height: 1.4;
+  }
+
+  .card h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .card h3 a:hover { color: var(--accent); }
+
+  .card .meta {
+    font-size: .8rem;
+    color: var(--text-muted);
+    margin-bottom: .5rem;
+  }
+
+  .card p {
+    font-size: .9rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Loading skeleton ── */
+  .skeleton {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .skeleton-line {
+    height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    margin-bottom: .6rem;
+  }
+
+  .skeleton-line:nth-child(1) { width: 30%; height: 10px; }
+  .skeleton-line:nth-child(2) { width: 80%; }
+  .skeleton-line:nth-child(3) { width: 60%; }
+  .skeleton-line:nth-child(4) { width: 90%; margin-bottom: 0; }
+
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ── Empty / Error ── */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--text-muted);
+  }
+
+  .empty-state svg { margin-bottom: 1rem; opacity: .4; }
+
+  .error-banner {
+    background: rgba(248, 113, 113, .1);
+    border: 1px solid rgba(248, 113, 113, .3);
+    color: var(--red);
+    padding: .75rem 1rem;
+    border-radius: var(--radius);
+    font-size: .875rem;
+    margin-bottom: 1rem;
+    display: none;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    header { padding: 1rem; }
+    .api-section input { width: 180px; }
+    main { padding: 1.5rem 1rem 3rem; }
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="13" stroke="#38bdf8" stroke-width="2"/>
+      <circle cx="14" cy="14" r="4" fill="#38bdf8"/>
+      <line x1="14" y1="1" x2="14" y2="8" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+      <line x1="25" y1="8" x2="19" y2="11.5" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+      <line x1="25" y1="20" x2="19" y2="16.5" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+      <line x1="14" y1="27" x2="14" y2="20" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+      <line x1="3" y1="20" x2="9" y2="16.5" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+      <line x1="3" y1="8" x2="9" y2="11.5" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    Research Radar
+  </div>
+  <div class="api-section">
+    <div class="api-status" id="apiStatus" title="API not connected"></div>
+    <input
+      type="password"
+      id="apiKeyInput"
+      placeholder="sk-ant-… Anthropic API key"
+      autocomplete="off"
+      spellcheck="false"
+    />
+  </div>
+</header>
+
+<!-- Main -->
+<main>
+  <div class="intro">
+    <h2>Live Research Feed</h2>
+    <p>Click a topic below to pull the latest papers, breakthroughs, and articles via web search.</p>
+  </div>
+
+  <!-- Topics -->
+  <div class="topics" id="topics"></div>
+
+  <!-- Error banner -->
+  <div class="error-banner" id="errorBanner"></div>
+
+  <!-- Feed -->
+  <div id="feed">
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <p>Enter your API key above, then select a topic to begin.</p>
+    </div>
+  </div>
+</main>
+
+<script>
+// ─── Config ───
+const TOPICS = [
+  { label: "High-Entropy Alloys",   query: "latest research papers and breakthroughs on high-entropy alloys in materials science" },
+  { label: "Electrocatalysis",      query: "latest research papers and breakthroughs in electrocatalysis for energy conversion" },
+  { label: "ML for Materials",      query: "latest research on machine learning and AI applied to materials discovery and design" },
+  { label: "AI in Science",         query: "new and novel ways artificial intelligence is being used in scientific research and discovery" },
+  { label: "Engineering Physics",   query: "latest research papers and advances in engineering physics" },
+  { label: "Trending in MatSci",    query: "trending and most-discussed topics in materials science research this month" },
+];
+
+const API_URL = "https://api.anthropic.com/v1/messages";
+
+// ─── State ───
+let activeTopic = null;
+let loading = false;
+const cache = {};
+
+// ─── DOM refs ───
+const apiKeyInput  = document.getElementById("apiKeyInput");
+const apiStatus    = document.getElementById("apiStatus");
+const topicsEl     = document.getElementById("topics");
+const feedEl       = document.getElementById("feed");
+const errorBanner  = document.getElementById("errorBanner");
+
+// ─── Init ───
+(function init() {
+  const saved = sessionStorage.getItem("rr_api_key");
+  if (saved) {
+    apiKeyInput.value = saved;
+    setConnected(true);
+  }
+
+  apiKeyInput.addEventListener("input", () => {
+    const key = apiKeyInput.value.trim();
+    if (key) {
+      sessionStorage.setItem("rr_api_key", key);
+      setConnected(true);
+    } else {
+      sessionStorage.removeItem("rr_api_key");
+      setConnected(false);
+    }
+  });
+
+  renderTopics();
+})();
+
+function setConnected(yes) {
+  apiStatus.classList.toggle("connected", yes);
+  apiStatus.title = yes ? "API key set" : "API not connected";
+}
+
+function getApiKey() {
+  return (apiKeyInput.value || "").trim();
+}
+
+// ─── Render topic pills ───
+function renderTopics() {
+  topicsEl.innerHTML = "";
+  TOPICS.forEach((t, i) => {
+    const btn = document.createElement("button");
+    btn.className = "pill";
+    btn.textContent = t.label;
+    btn.addEventListener("click", () => selectTopic(i));
+    topicsEl.appendChild(btn);
+  });
+}
+
+function updatePillStates() {
+  const pills = topicsEl.querySelectorAll(".pill");
+  pills.forEach((p, i) => {
+    p.classList.toggle("active", i === activeTopic);
+    p.disabled = loading;
+  });
+}
+
+// ─── Select topic ───
+async function selectTopic(index) {
+  if (loading) return;
+  if (!getApiKey()) {
+    showError("Please enter your Anthropic API key first.");
+    return;
+  }
+
+  hideError();
+  activeTopic = index;
+  const topic = TOPICS[index];
+
+  // Check cache (5 min TTL)
+  const cacheKey = topic.label;
+  if (cache[cacheKey] && Date.now() - cache[cacheKey].ts < 5 * 60 * 1000) {
+    renderCards(cache[cacheKey].cards, topic.label);
+    updatePillStates();
+    return;
+  }
+
+  loading = true;
+  updatePillStates();
+  showSkeletons();
+
+  try {
+    const results = await fetchResearch(topic);
+    cache[cacheKey] = { cards: results, ts: Date.now() };
+    renderCards(results, topic.label);
+  } catch (err) {
+    showError(err.message || "Something went wrong.");
+    feedEl.innerHTML = "";
+  } finally {
+    loading = false;
+    updatePillStates();
+  }
+}
+
+// ─── Anthropic API call with web search ───
+async function fetchResearch(topic) {
+  const systemPrompt = `You are a research assistant for a materials science researcher. The user wants the latest research papers, breakthroughs, and notable articles for a given topic.
+
+Use the web search tool to find the most recent and relevant results. Then return ONLY a JSON array (no markdown, no wrapping) of objects with these fields:
+- "title": paper or article title
+- "url": link to the source (use actual URLs from search results)
+- "authors": authors if available, otherwise empty string
+- "source": journal, preprint server, or website name
+- "date": publication date if available, otherwise empty string
+- "summary": 2-3 sentence summary of the key findings or contribution
+
+Return 6-10 results. Sort by relevance and recency. Return ONLY valid JSON, no other text.`;
+
+  const resp = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": getApiKey(),
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 4096,
+      tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 5 }],
+      system: systemPrompt,
+      messages: [
+        { role: "user", content: topic.query }
+      ],
+    }),
+  });
+
+  if (!resp.ok) {
+    const body = await resp.json().catch(() => ({}));
+    if (resp.status === 401) throw new Error("Invalid API key. Please check and re-enter.");
+    throw new Error(body.error?.message || `API error ${resp.status}`);
+  }
+
+  const data = await resp.json();
+
+  // Extract text blocks from the response
+  let text = "";
+  for (const block of data.content) {
+    if (block.type === "text") {
+      text += block.text;
+    }
+  }
+
+  // Parse JSON from the response
+  const jsonMatch = text.match(/\[[\s\S]*\]/);
+  if (!jsonMatch) throw new Error("Could not parse results. Try again.");
+
+  let papers;
+  try {
+    papers = JSON.parse(jsonMatch[0]);
+  } catch {
+    throw new Error("Malformed response. Try again.");
+  }
+
+  return papers;
+}
+
+// ─── Render cards ───
+function renderCards(cards, topicLabel) {
+  if (!cards.length) {
+    feedEl.innerHTML = `<div class="empty-state"><p>No results found. Try another topic.</p></div>`;
+    return;
+  }
+
+  feedEl.innerHTML = "";
+  cards.forEach((c, i) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.animationDelay = `${i * 0.06}s`;
+
+    const meta = [c.source, c.date, c.authors].filter(Boolean).join(" · ");
+    const titleHtml = c.url
+      ? `<a href="${escapeHtml(c.url)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
+      : escapeHtml(c.title);
+
+    card.innerHTML = `
+      <span class="card-topic">${escapeHtml(topicLabel)}</span>
+      <h3>${titleHtml}</h3>
+      ${meta ? `<div class="meta">${escapeHtml(meta)}</div>` : ""}
+      <p>${escapeHtml(c.summary || "")}</p>
+    `;
+    feedEl.appendChild(card);
+  });
+}
+
+// ─── Skeletons ───
+function showSkeletons() {
+  feedEl.innerHTML = "";
+  for (let i = 0; i < 5; i++) {
+    const s = document.createElement("div");
+    s.className = "skeleton";
+    s.innerHTML = `
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line"></div>
+    `;
+    feedEl.appendChild(s);
+  }
+}
+
+// ─── Error handling ───
+function showError(msg) {
+  errorBanner.textContent = msg;
+  errorBanner.style.display = "block";
+}
+
+function hideError() {
+  errorBanner.style.display = "none";
+}
+
+// ─── Util ───
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+</script>
+
+</body>
+</html>
