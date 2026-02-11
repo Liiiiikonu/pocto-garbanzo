@@ -3,1223 +3,900 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Research Radar — Live Materials Science Feed</title>
+<title>Research Radar</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;800;900&display=swap');
 
   :root {
-    --bg: #07080f;
-    --bg-subtle: #0c0e18;
-    --surface: rgba(17, 20, 35, 0.7);
-    --surface-solid: #111423;
-    --surface2: rgba(25, 30, 52, 0.6);
-    --surface-hover: rgba(30, 35, 60, 0.8);
-    --glass: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.06);
-    --border: rgba(255, 255, 255, 0.07);
-    --border-hover: rgba(255, 255, 255, 0.12);
-    --text: #eaf0f6;
-    --text-secondary: #a0aec0;
-    --text-muted: #6b7a90;
-    --accent: #6c63ff;
-    --accent-light: #8b83ff;
-    --accent-glow: rgba(108, 99, 255, 0.15);
-    --accent-glow-strong: rgba(108, 99, 255, 0.3);
-    --cyan: #22d3ee;
-    --cyan-glow: rgba(34, 211, 238, 0.12);
-    --green: #34d399;
-    --green-glow: rgba(52, 211, 153, 0.12);
-    --amber: #fbbf24;
-    --amber-glow: rgba(251, 191, 36, 0.1);
-    --rose: #fb7185;
-    --rose-glow: rgba(251, 113, 133, 0.12);
-    --orange: #fb923c;
-    --orange-glow: rgba(251, 146, 60, 0.12);
-    --radius: 14px;
-    --radius-sm: 8px;
-    --radius-lg: 20px;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
-    --shadow-md: 0 4px 20px rgba(0,0,0,0.3);
-    --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
-    --shadow-glow: 0 0 30px rgba(108, 99, 255, 0.08);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* Background gradient mesh */
-  body::before {
-    content: '';
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background:
-      radial-gradient(ellipse 600px 600px at 20% 20%, rgba(108, 99, 255, 0.06), transparent),
-      radial-gradient(ellipse 500px 500px at 80% 10%, rgba(34, 211, 238, 0.04), transparent),
-      radial-gradient(ellipse 400px 400px at 50% 80%, rgba(251, 113, 133, 0.03), transparent);
-    z-index: -1;
-    pointer-events: none;
-  }
-
-  /* ── Header ── */
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-bottom: 1px solid var(--glass-border);
-    padding: 0.9rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-    background: rgba(7, 8, 15, 0.8);
-    backdrop-filter: blur(20px) saturate(1.5);
-    -webkit-backdrop-filter: blur(20px) saturate(1.5);
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: .7rem;
-    font-size: 1.2rem;
-    font-weight: 800;
-    letter-spacing: -.03em;
-    background: linear-gradient(135deg, var(--accent-light), var(--cyan));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .logo-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--accent), var(--cyan));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 20px rgba(108, 99, 255, 0.3);
-  }
-
-  .logo-icon svg { flex-shrink: 0; }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-    font-size: .8rem;
-    color: var(--text-muted);
-  }
-
-  .live-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: .4rem;
-    font-size: .7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: var(--green);
-    background: var(--green-glow);
-    border: 1px solid rgba(52, 211, 153, 0.2);
-    padding: .25rem .65rem;
-    border-radius: 999px;
-  }
-
-  .live-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-    animation: pulse 2s ease-in-out infinite;
-    box-shadow: 0 0 6px var(--green);
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--green); }
-    50% { opacity: .4; box-shadow: 0 0 2px var(--green); }
-  }
-
-  .sort-select {
-    background: var(--bg-subtle);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    padding: .4rem .7rem;
-    border-radius: var(--radius-sm);
-    font-size: .78rem;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all .25s ease;
-  }
-
-  .sort-select:hover { border-color: var(--border-hover); color: var(--text); }
-  .sort-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-
-  /* ── Main layout ── */
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem 5rem;
-  }
-
-  /* ── Hero / Intro ── */
-  .intro {
-    text-align: center;
-    margin-bottom: 2.5rem;
-    position: relative;
-  }
-
-  .intro h2 {
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -.04em;
-    margin-bottom: .5rem;
-    background: linear-gradient(135deg, var(--text) 0%, var(--text-secondary) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .intro p {
-    color: var(--text-muted);
-    font-size: .95rem;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-
-  /* ── Topic pills ── */
-  .topics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .5rem;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .pill {
-    padding: .5rem 1.15rem;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--glass);
-    color: var(--text-muted);
-    font-size: .82rem;
-    font-weight: 500;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all .25s cubic-bezier(.4,0,.2,1);
-    user-select: none;
-    white-space: nowrap;
-    backdrop-filter: blur(4px);
-  }
-
-  .pill:hover {
-    border-color: var(--accent);
-    color: var(--text);
-    background: var(--accent-glow);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm), 0 0 15px var(--accent-glow);
-  }
-
-  .pill.active {
-    border-color: var(--accent);
-    background: linear-gradient(135deg, var(--accent-glow-strong), var(--accent-glow));
-    color: var(--accent-light);
-    font-weight: 600;
-    box-shadow: 0 0 20px var(--accent-glow);
-  }
-
-  .pill:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-
-  /* ── Filters bar ── */
-  .filters-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .75rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-  }
-
-  .filter-group {
-    display: flex;
-    align-items: center;
-    gap: .4rem;
-    font-size: .78rem;
-    color: var(--text-muted);
-  }
-
-  .filter-group label {
-    font-weight: 500;
-    letter-spacing: .02em;
-  }
-
-  .filter-select {
-    background: var(--bg-subtle);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    padding: .35rem .55rem;
-    border-radius: var(--radius-sm);
-    font-size: .78rem;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all .25s ease;
-  }
-
-  .filter-select:hover { border-color: var(--border-hover); }
-  .filter-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-
-  .filter-divider {
-    width: 1px;
-    height: 18px;
-    background: var(--border);
-    margin: 0 .25rem;
-  }
-
-  .filter-checkbox {
-    display: inline-flex;
-    align-items: center;
-    gap: .35rem;
-    cursor: pointer;
-    font-size: .78rem;
-    color: var(--text-muted);
-    transition: color .2s;
-  }
-
-  .filter-checkbox:hover { color: var(--text-secondary); }
-
-  .filter-checkbox input[type="checkbox"] {
-    accent-color: var(--accent);
-    width: 14px;
-    height: 14px;
-    cursor: pointer;
-  }
-
-  /* ── Result count + refresh bar ── */
-  .result-info {
-    display: none;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.25rem;
-    font-size: .78rem;
-    color: var(--text-muted);
-  }
-
-  .result-info.visible { display: flex; }
-
-  .refresh-bar {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-  }
-
-  .refresh-timer {
-    font-variant-numeric: tabular-nums;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .72rem;
-    opacity: .7;
-  }
-
-  .refresh-btn {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: .25rem .6rem;
-    border-radius: var(--radius-sm);
-    font-size: .72rem;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all .25s ease;
-  }
-
-  .refresh-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent-light);
-    background: var(--accent-glow);
-  }
-
-  .refresh-btn:disabled { opacity: .3; cursor: not-allowed; }
-
-  /* ── Feed ── */
-  #feed {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-
-  /* ── Hero card (first result) ── */
-  .card-hero {
-    background: linear-gradient(145deg, var(--surface), var(--surface2));
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: 2rem 2rem 1.75rem;
-    transition: all .35s cubic-bezier(.4,0,.2,1);
-    animation: fadeUp .5s ease both;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .card-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--cyan), var(--accent));
-    background-size: 200% 100%;
-    animation: shimmerGradient 3s ease infinite;
-  }
-
-  @keyframes shimmerGradient {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
-
-  .card-hero:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg), var(--shadow-glow);
-  }
-
-  .card-hero .card-topic { font-size: .72rem; }
-
-  .card-hero h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    line-height: 1.4;
-    margin-bottom: .5rem;
-  }
-
-  .card-hero .meta { font-size: .82rem; }
-  .card-hero .abstract { font-size: .92rem; line-height: 1.75; }
-
-  .hero-label {
-    display: inline-flex;
-    align-items: center;
-    gap: .25rem;
-    font-size: .6rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .1em;
-    color: var(--cyan);
-    background: var(--cyan-glow);
-    border: 1px solid rgba(34, 211, 238, 0.2);
-    padding: .15rem .5rem;
-    border-radius: 4px;
-    margin-right: .5rem;
-  }
-
-  /* ── Regular card ── */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
-    transition: all .3s cubic-bezier(.4,0,.2,1);
-    animation: fadeUp .4s ease both;
-    position: relative;
-    backdrop-filter: blur(4px);
-  }
-
-  .card:hover {
-    border-color: rgba(108, 99, 255, 0.3);
-    background: var(--surface-hover);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md), 0 0 20px var(--accent-glow);
-  }
-
-  .card-badges {
-    display: flex;
-    align-items: center;
-    gap: .4rem;
-    margin-bottom: .5rem;
-    flex-wrap: wrap;
-  }
-
-  .card-topic {
-    display: inline-block;
-    font-size: .65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .07em;
-    color: var(--accent-light);
-    opacity: .8;
-  }
-
-  .badge-hot {
-    display: inline-flex;
-    align-items: center;
-    gap: .25rem;
-    font-size: .6rem;
-    font-weight: 700;
-    color: var(--orange);
-    background: var(--orange-glow);
-    border: 1px solid rgba(251, 146, 60, 0.25);
-    padding: .12rem .45rem;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    animation: hotPulse 2s ease-in-out infinite;
-  }
-
-  @keyframes hotPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.2); }
-    50% { box-shadow: 0 0 8px 2px rgba(251, 146, 60, 0.15); }
-  }
-
-  .card-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: .75rem;
-    margin-bottom: .3rem;
-  }
-
-  .card h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.45;
-    flex: 1;
-    letter-spacing: -.01em;
-  }
-
-  .card h3 a {
-    color: var(--text);
-    text-decoration: none;
-    transition: color .2s;
-  }
-
-  .card h3 a:hover { color: var(--accent-light); }
-
-  .card .meta {
-    font-size: .78rem;
-    color: var(--text-muted);
-    margin-bottom: .6rem;
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    flex-wrap: wrap;
-  }
-
-  .meta-dot {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--text-muted);
-    opacity: .5;
-    flex-shrink: 0;
-  }
-
-  .abstract {
-    font-size: .88rem;
-    color: var(--text-secondary);
-    line-height: 1.7;
-    padding-top: .35rem;
-    border-top: 1px solid var(--border);
-    margin-top: .4rem;
-  }
-
-  .card-stats {
-    display: flex;
-    align-items: center;
-    gap: .4rem;
-    flex-shrink: 0;
-  }
-
-  .cite-count {
-    font-size: .68rem;
-    font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
-    color: var(--amber);
-    background: var(--amber-glow);
-    border: 1px solid rgba(251, 191, 36, 0.18);
-    padding: .15rem .5rem;
-    border-radius: 999px;
-    white-space: nowrap;
-  }
-
-  .open-access {
-    display: inline-flex;
-    align-items: center;
-    gap: .2rem;
-    font-size: .6rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    color: var(--green);
-    background: var(--green-glow);
-    border: 1px solid rgba(52, 211, 153, 0.18);
-    padding: .12rem .4rem;
-    border-radius: 4px;
-    margin-left: .5rem;
-    vertical-align: middle;
-  }
-
-  .year-badge {
-    font-size: .65rem;
-    font-weight: 500;
-    font-family: 'JetBrains Mono', monospace;
-    color: var(--text-muted);
-    background: var(--glass);
-    border: 1px solid var(--border);
-    padding: .1rem .4rem;
-    border-radius: 4px;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── Loading skeleton ── */
-  .skeleton {
-    background: var(--surface);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
-  }
-
-  .skeleton-line {
-    height: 14px;
-    border-radius: 6px;
-    background: linear-gradient(90deg, var(--surface2) 25%, rgba(255,255,255,0.04) 50%, var(--surface2) 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s ease infinite;
-    margin-bottom: .65rem;
-  }
-
-  .skeleton-line:nth-child(1) { width: 25%; height: 10px; }
-  .skeleton-line:nth-child(2) { width: 85%; }
-  .skeleton-line:nth-child(3) { width: 55%; }
-  .skeleton-line:nth-child(4) { width: 92%; margin-bottom: 0; }
-
-  .skeleton-hero {
-    background: linear-gradient(145deg, var(--surface), var(--surface2));
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-  }
-
-  .skeleton-hero .skeleton-line:nth-child(2) { height: 20px; }
-
-  @keyframes shimmer {
-    0%   { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
-
-  /* ── Empty / Error ── */
-  .empty-state {
-    text-align: center;
-    padding: 5rem 1rem;
-    color: var(--text-muted);
-  }
-
-  .empty-state svg { margin-bottom: 1.25rem; opacity: .3; }
-  .empty-state p { font-size: .95rem; }
-
-  .error-banner {
-    background: var(--rose-glow);
-    border: 1px solid rgba(251, 113, 133, 0.25);
-    color: var(--rose);
-    padding: .75rem 1rem;
-    border-radius: var(--radius);
-    font-size: .85rem;
-    margin-bottom: 1rem;
-    display: none;
-    backdrop-filter: blur(4px);
-  }
-
-  /* ── Footer ── */
-  footer {
-    text-align: center;
-    padding: 2rem 1.5rem;
-    font-size: .75rem;
-    color: var(--text-muted);
-    border-top: 1px solid var(--border);
-  }
-
-  footer a {
-    color: var(--accent-light);
-    text-decoration: none;
-    transition: color .2s;
-  }
-
-  footer a:hover { color: var(--cyan); text-decoration: underline; }
-
-  /* ── Responsive ── */
-  @media (max-width: 640px) {
-    header { padding: .75rem 1rem; }
-    main { padding: 1.5rem 1rem 3rem; }
-    .intro h2 { font-size: 1.5rem; }
-    .card-hero { padding: 1.5rem; }
-    .card-hero h3 { font-size: 1.1rem; }
-    .card-header { flex-direction: column; gap: .5rem; }
-    .filters-bar { flex-direction: column; gap: .6rem; }
-    .filter-divider { display: none; }
-  }
-
-  /* ── Scrollbar ── */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
-
-  /* ── Selection ── */
-  ::selection {
-    background: var(--accent-glow-strong);
-    color: var(--text);
+    --bg: #06070d;
+    --bg2: #0a0c16;
+    --surface: rgba(14,16,30,0.85);
+    --surface2: rgba(20,24,44,0.7);
+    --surface3: rgba(28,32,56,0.5);
+    --glass: rgba(255,255,255,0.025);
+    --glass2: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.06);
+    --border2: rgba(255,255,255,0.1);
+    --text: #f0f4f8;
+    --text2: #c4cdd8;
+    --text3: #7b8a9e;
+    --text4: #4a5568;
+    --purple: #7c5cfc;
+    --purple2: #9b85ff;
+    --purple-g: rgba(124,92,252,0.12);
+    --purple-g2: rgba(124,92,252,0.25);
+    --blue: #3b82f6;
+    --blue-g: rgba(59,130,246,0.12);
+    --cyan: #06b6d4;
+    --cyan-g: rgba(6,182,212,0.12);
+    --green: #10b981;
+    --green-g: rgba(16,185,129,0.12);
+    --amber: #f59e0b;
+    --amber-g: rgba(245,158,11,0.1);
+    --rose: #f43f5e;
+    --rose-g: rgba(244,63,94,0.1);
+    --orange: #f97316;
+    --orange-g: rgba(249,115,22,0.1);
+    --r: 16px;
+    --r-sm: 10px;
+    --r-lg: 22px;
+    --r-xl: 28px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  html{scroll-behavior:smooth}
+
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  /* ─── Animated background ─── */
+  #bgCanvas{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    z-index:0;pointer-events:none;opacity:.6;
+  }
+
+  .page-wrap{position:relative;z-index:1}
+
+  /* ─── Header ─── */
+  header{
+    position:sticky;top:0;z-index:100;
+    padding:.75rem 2rem;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:1rem;flex-wrap:wrap;
+    background:rgba(6,7,13,0.7);
+    backdrop-filter:blur(24px) saturate(1.8);
+    -webkit-backdrop-filter:blur(24px) saturate(1.8);
+    border-bottom:1px solid var(--border);
+  }
+
+  .logo{
+    display:flex;align-items:center;gap:.6rem;
+    font-size:1.15rem;font-weight:800;letter-spacing:-.03em;
+    color:var(--text);
+    text-decoration:none;
+  }
+
+  .logo-mark{
+    width:34px;height:34px;border-radius:12px;position:relative;
+    background:linear-gradient(135deg,var(--purple),var(--blue));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 24px rgba(124,92,252,.35),inset 0 1px 0 rgba(255,255,255,.15);
+    overflow:hidden;
+  }
+
+  .logo-mark::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.12));
+  }
+
+  .nav-controls{display:flex;align-items:center;gap:.6rem}
+
+  .live-pill{
+    display:inline-flex;align-items:center;gap:.35rem;
+    font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--green);
+    background:var(--green-g);border:1px solid rgba(16,185,129,.2);
+    padding:.2rem .6rem;border-radius:999px;
   }
+
+  .live-pill .dot{
+    width:5px;height:5px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 6px var(--green);animation:blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+  .ctrl-btn{
+    background:var(--glass2);border:1px solid var(--border);
+    color:var(--text3);padding:.35rem .7rem;border-radius:var(--r-sm);
+    font-size:.75rem;font-family:inherit;font-weight:500;
+    cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.35rem;
+  }
+  .ctrl-btn:hover{border-color:var(--border2);color:var(--text2);background:var(--glass2)}
+  .ctrl-btn:focus{outline:none;box-shadow:0 0 0 2px var(--purple-g2)}
+  .ctrl-btn select{
+    background:transparent;border:none;color:inherit;font:inherit;cursor:pointer;
+    -webkit-appearance:none;appearance:none;outline:none;
+  }
+
+  /* ─── Hero section ─── */
+  .hero{
+    text-align:center;padding:3.5rem 1.5rem 1.5rem;
+    position:relative;
+  }
+
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:.4rem;
+    font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+    color:var(--purple2);
+    background:var(--purple-g);border:1px solid rgba(124,92,252,.15);
+    padding:.3rem .8rem;border-radius:999px;margin-bottom:1.25rem;
+  }
+
+  .hero h1{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:clamp(2.2rem,5vw,3.5rem);font-weight:900;
+    letter-spacing:-.04em;line-height:1.1;
+    margin-bottom:.75rem;
+    background:linear-gradient(to right,var(--text),var(--text2) 60%,var(--text3));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+
+  .hero p{color:var(--text3);font-size:1rem;max-width:440px;margin:0 auto}
+
+  /* ─── Stats strip ─── */
+  .stats-strip{
+    display:flex;justify-content:center;gap:2rem;
+    padding:1.5rem 1rem;flex-wrap:wrap;
+  }
+
+  .stat-item{display:flex;flex-direction:column;align-items:center;gap:.15rem}
+  .stat-num{
+    font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;
+    background:linear-gradient(135deg,var(--purple2),var(--cyan));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .stat-label{font-size:.68rem;color:var(--text4);font-weight:500;text-transform:uppercase;letter-spacing:.08em}
+
+  /* ─── Topics as rich cards ─── */
+  .topic-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+    gap:.6rem;max-width:960px;margin:0 auto 1.25rem;padding:0 1.5rem;
+  }
+
+  .topic-card{
+    position:relative;padding:.85rem 1rem;
+    border-radius:var(--r);border:1px solid var(--border);
+    background:var(--surface);cursor:pointer;
+    transition:all .3s cubic-bezier(.4,0,.2,1);
+    overflow:hidden;text-align:left;font-family:inherit;color:var(--text2);
+  }
+
+  .topic-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:var(--tc-color,var(--purple));opacity:0;
+    transition:opacity .3s;
+  }
+
+  .topic-card:hover{
+    border-color:var(--border2);transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(0,0,0,.3);
+  }
+  .topic-card:hover::before{opacity:1}
+
+  .topic-card.active{
+    border-color:var(--tc-color,var(--purple));
+    background:linear-gradient(to bottom,rgba(124,92,252,.06),var(--surface));
+    box-shadow:0 0 30px rgba(124,92,252,.08);
+  }
+  .topic-card.active::before{opacity:1}
+
+  .topic-card:disabled{opacity:.35;cursor:not-allowed;transform:none}
+
+  .tc-icon{font-size:1.25rem;margin-bottom:.3rem;display:block}
+  .tc-label{font-size:.8rem;font-weight:600;display:block;color:var(--text)}
+  .tc-sub{font-size:.62rem;color:var(--text4);margin-top:.15rem;display:block}
+
+  /* ─── Filters row ─── */
+  .toolbar{
+    max-width:960px;margin:0 auto .75rem;padding:0 1.5rem;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:.75rem;flex-wrap:wrap;
+  }
+
+  .filter-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+
+  .f-group{
+    display:inline-flex;align-items:center;gap:.3rem;
+    font-size:.72rem;color:var(--text3);
+  }
+  .f-group label{font-weight:500}
+  .f-select{
+    background:var(--bg2);border:1px solid var(--border);color:var(--text2);
+    padding:.3rem .5rem;border-radius:8px;font-size:.72rem;font-family:inherit;
+    cursor:pointer;transition:all .2s;
+  }
+  .f-select:hover{border-color:var(--border2)}
+  .f-select:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 2px var(--purple-g)}
+
+  .f-check{
+    display:inline-flex;align-items:center;gap:.3rem;cursor:pointer;
+    font-size:.72rem;color:var(--text3);transition:color .2s;
+  }
+  .f-check:hover{color:var(--text2)}
+  .f-check input{accent-color:var(--purple);width:13px;height:13px;cursor:pointer}
+
+  .f-sep{width:1px;height:16px;background:var(--border);margin:0 .15rem}
+
+  .refresh-area{display:flex;align-items:center;gap:.5rem;font-size:.7rem;color:var(--text4)}
+  .refresh-area .timer{font-family:'JetBrains Mono',monospace;font-size:.68rem}
+  .refresh-area button{
+    background:none;border:1px solid var(--border);color:var(--text3);
+    padding:.2rem .5rem;border-radius:6px;font:.68rem/1 inherit;cursor:pointer;transition:all .2s;
+  }
+  .refresh-area button:hover{border-color:var(--purple);color:var(--purple2)}
+  .refresh-area button:disabled{opacity:.3;cursor:not-allowed}
+
+  /* ─── Result info ─── */
+  .result-bar{
+    max-width:960px;margin:0 auto .6rem;padding:0 1.5rem;
+    display:none;align-items:center;justify-content:space-between;
+    font-size:.72rem;color:var(--text4);
+  }
+  .result-bar.visible{display:flex}
+
+  /* ─── Feed grid ─── */
+  .feed-area{max-width:960px;margin:0 auto;padding:0 1.5rem 5rem}
+
+  /* ─── Featured section (top 3) ─── */
+  .featured-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:auto auto;
+    gap:.75rem;
+    margin-bottom:.75rem;
+  }
+
+  .featured-grid .f-card:first-child{
+    grid-row:1/3;
+  }
+
+  .f-card{
+    position:relative;border-radius:var(--r-lg);overflow:hidden;
+    border:1px solid var(--border);
+    background:linear-gradient(160deg,var(--surface),var(--surface2));
+    padding:1.5rem;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    transition:all .4s cubic-bezier(.4,0,.2,1);
+    animation:rise .6s ease both;
+    cursor:default;
+  }
+
+  .f-card::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 30%,rgba(6,7,13,.5));
+    z-index:0;pointer-events:none;
+  }
+
+  .f-card>*{position:relative;z-index:1}
+
+  .f-card:hover{
+    border-color:var(--purple);
+    transform:translateY(-3px);
+    box-shadow:0 12px 40px rgba(0,0,0,.4),0 0 40px var(--purple-g);
+  }
+
+  .f-card .rank-badge{
+    position:absolute;top:1rem;left:1rem;z-index:2;
+    width:32px;height:32px;border-radius:10px;
+    background:linear-gradient(135deg,var(--purple),var(--blue));
+    display:flex;align-items:center;justify-content:center;
+    font-size:.8rem;font-weight:800;color:#fff;
+    box-shadow:0 4px 12px rgba(124,92,252,.4);
+  }
+
+  .f-card .f-badges{display:flex;align-items:center;gap:.35rem;margin-bottom:.5rem;flex-wrap:wrap}
+
+  .f-card h3{
+    font-size:1.05rem;font-weight:700;line-height:1.35;
+    margin-bottom:.4rem;letter-spacing:-.02em;
+  }
+  .f-card:first-child h3{font-size:1.25rem}
+
+  .f-card h3 a{color:var(--text);text-decoration:none;transition:color .2s}
+  .f-card h3 a:hover{color:var(--purple2)}
+
+  .f-card .f-meta{font-size:.72rem;color:var(--text3);margin-bottom:.5rem;line-height:1.5}
+
+  .f-card .f-abstract{
+    font-size:.82rem;color:var(--text2);line-height:1.7;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .f-card:first-child .f-abstract{-webkit-line-clamp:5}
+
+  .f-card .f-footer{
+    display:flex;align-items:center;gap:.4rem;margin-top:.65rem;flex-wrap:wrap;
+  }
+
+  /* ─── Regular cards ─── */
+  .card-list{display:flex;flex-direction:column;gap:.6rem}
+
+  .card{
+    border:1px solid var(--border);border-radius:var(--r);
+    background:var(--surface);
+    padding:1.15rem 1.35rem;
+    display:grid;grid-template-columns:auto 1fr auto;gap:0 1rem;
+    align-items:start;
+    transition:all .3s cubic-bezier(.4,0,.2,1);
+    animation:rise .45s ease both;
+    cursor:default;
+  }
+
+  .card:hover{
+    border-color:var(--border2);
+    background:var(--surface2);
+    transform:translateX(4px);
+    box-shadow:0 4px 20px rgba(0,0,0,.25),-4px 0 0 var(--purple);
+  }
+
+  .card-rank{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.72rem;font-weight:600;color:var(--text4);
+    padding-top:.15rem;
+    min-width:22px;text-align:right;
+  }
+
+  .card-body{min-width:0}
+
+  .card-body .cb-badges{display:flex;align-items:center;gap:.35rem;margin-bottom:.3rem;flex-wrap:wrap}
+
+  .card-body h3{
+    font-size:.92rem;font-weight:600;line-height:1.4;
+    margin-bottom:.2rem;letter-spacing:-.01em;
+  }
+
+  .card-body h3 a{color:var(--text);text-decoration:none;transition:color .2s}
+  .card-body h3 a:hover{color:var(--purple2)}
+
+  .card-body .cb-meta{font-size:.72rem;color:var(--text3);line-height:1.5;margin-bottom:.35rem}
+
+  .card-body .cb-abstract{
+    font-size:.82rem;color:var(--text2);line-height:1.65;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+
+  .card-side{
+    display:flex;flex-direction:column;align-items:flex-end;gap:.4rem;
+    padding-top:.15rem;
+  }
+
+  .card-side .cite-bar{
+    display:flex;align-items:center;gap:.35rem;
+  }
+
+  .cite-bar-visual{
+    width:40px;height:4px;border-radius:2px;background:var(--glass2);overflow:hidden;
+  }
+  .cite-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--amber),var(--orange));transition:width .6s ease}
+
+  /* ─── Shared badges ─── */
+  .badge{
+    display:inline-flex;align-items:center;gap:.2rem;
+    font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+    padding:.12rem .45rem;border-radius:5px;
+    border:1px solid transparent;
+    white-space:nowrap;
+  }
+
+  .badge-topic{color:var(--purple2);background:var(--purple-g);border-color:rgba(124,92,252,.15)}
+  .badge-hot{
+    color:var(--orange);background:var(--orange-g);border-color:rgba(249,115,22,.2);
+    animation:hotGlow 2s ease-in-out infinite;
+  }
+  @keyframes hotGlow{0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,.15)}50%{box-shadow:0 0 10px 2px rgba(249,115,22,.1)}}
+
+  .badge-oa{color:var(--green);background:var(--green-g);border-color:rgba(16,185,129,.15)}
+  .badge-year{
+    color:var(--text3);background:var(--glass);border-color:var(--border);
+    font-family:'JetBrains Mono',monospace;font-weight:500;
+  }
+  .badge-cite{
+    color:var(--amber);background:var(--amber-g);border-color:rgba(245,158,11,.15);
+    font-family:'JetBrains Mono',monospace;font-weight:600;
+  }
+  .badge-rank-featured{
+    color:var(--cyan);background:var(--cyan-g);border-color:rgba(6,182,212,.2);
+  }
+
+  .meta-sep{
+    display:inline-block;width:3px;height:3px;border-radius:50%;
+    background:var(--text4);margin:0 .3rem;vertical-align:middle;
+  }
+
+  @keyframes rise{
+    from{opacity:0;transform:translateY(20px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  /* ─── Skeletons ─── */
+  .skel{border-radius:var(--r);border:1px solid var(--border);background:var(--surface);padding:1.25rem}
+  .skel-lg{border-radius:var(--r-lg);padding:2rem;min-height:200px}
+  .skel-line{
+    height:12px;border-radius:6px;
+    background:linear-gradient(90deg,var(--surface2) 25%,rgba(255,255,255,.035) 50%,var(--surface2) 75%);
+    background-size:200% 100%;animation:shimmer 1.5s ease infinite;margin-bottom:.6rem;
+  }
+  .skel-line:nth-child(1){width:25%;height:9px}
+  .skel-line:nth-child(2){width:80%}
+  .skel-line:nth-child(3){width:55%}
+  .skel-line:nth-child(4){width:90%;margin-bottom:0}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  /* ─── Empty / Error ─── */
+  .empty-state{text-align:center;padding:5rem 1rem;color:var(--text4)}
+  .empty-state svg{margin-bottom:1rem;opacity:.25}
+  .empty-state p{font-size:.95rem}
+
+  .error-banner{
+    max-width:960px;margin:0 auto .75rem;padding:0 1.5rem;display:none;
+  }
+  .error-banner-inner{
+    background:var(--rose-g);border:1px solid rgba(244,63,94,.2);
+    color:var(--rose);padding:.65rem 1rem;border-radius:var(--r);font-size:.82rem;
+  }
+
+  /* ─── Footer ─── */
+  footer{
+    text-align:center;padding:2.5rem 1.5rem;font-size:.7rem;color:var(--text4);
+    border-top:1px solid var(--border);
+  }
+  footer a{color:var(--purple2);text-decoration:none;transition:color .2s}
+  footer a:hover{color:var(--cyan)}
+
+  /* ─── Responsive ─── */
+  @media(max-width:768px){
+    header{padding:.65rem 1rem}
+    .hero{padding:2.5rem 1rem 1rem}
+    .hero h1{font-size:2rem}
+    .stats-strip{gap:1.25rem}
+    .topic-grid{grid-template-columns:repeat(3,1fr);padding:0 1rem}
+    .toolbar{padding:0 1rem}
+    .feed-area{padding:0 1rem 4rem}
+    .featured-grid{grid-template-columns:1fr;grid-template-rows:auto}
+    .featured-grid .f-card:first-child{grid-row:auto}
+    .card{grid-template-columns:auto 1fr;gap:0 .75rem}
+    .card-side{display:none}
+  }
+
+  @media(max-width:480px){
+    .topic-grid{grid-template-columns:repeat(2,1fr)}
+    .f-card{padding:1.15rem}
+    .stats-strip{gap:.75rem}
+    .stat-num{font-size:1.2rem}
+  }
+
+  /* ─── Scrollbar ─── */
+  ::-webkit-scrollbar{width:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--border2)}
+  ::selection{background:var(--purple-g2);color:var(--text)}
 </style>
 </head>
 <body>
 
-<!-- Header -->
+<canvas id="bgCanvas"></canvas>
+
+<div class="page-wrap">
+
 <header>
-  <div class="logo">
-    <div class="logo-icon">
-      <svg width="18" height="18" viewBox="0 0 28 28" fill="none">
-        <circle cx="14" cy="14" r="10" stroke="#fff" stroke-width="2.5" stroke-opacity="0.9"/>
-        <circle cx="14" cy="14" r="3.5" fill="#fff" fill-opacity="0.9"/>
-        <line x1="14" y1="2" x2="14" y2="7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.7"/>
-        <line x1="24" y1="8" x2="19.5" y2="11" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.7"/>
-        <line x1="24" y1="20" x2="19.5" y2="17" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.7"/>
-        <line x1="14" y1="26" x2="14" y2="21" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.7"/>
-        <line x1="4" y1="20" x2="8.5" y2="17" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.7"/>
-        <line x1="4" y1="8" x2="8.5" y2="11" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.7"/>
+  <a class="logo" href="#">
+    <div class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+        <circle cx="12" cy="12" r="3" fill="#fff" fill-opacity=".8" stroke="none"/>
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke-opacity=".6"/>
       </svg>
     </div>
     Research Radar
-  </div>
-  <div class="header-right">
-    <div class="live-badge">
-      <div class="live-dot"></div>
-      Live
+  </a>
+  <div class="nav-controls">
+    <div class="live-pill"><div class="dot"></div> Live</div>
+    <div class="ctrl-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M6 6v12a2 2 0 002 2h8a2 2 0 002-2V6"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+      <select id="sortSelect" title="Sort">
+        <option value="hot">Hottest</option>
+        <option value="recent">Newest</option>
+        <option value="cited">Most Cited</option>
+        <option value="relevant">Relevant</option>
+      </select>
     </div>
-    <select class="sort-select" id="sortSelect" title="Sort results">
-      <option value="hot">Hottest</option>
-      <option value="recent">Most Recent</option>
-      <option value="cited">Most Cited</option>
-      <option value="relevant">Most Relevant</option>
-    </select>
   </div>
 </header>
 
-<!-- Main -->
-<main>
-  <div class="intro">
-    <h2>Discover Fresh Research</h2>
-    <p>Real-time papers from OpenAlex. Auto-refreshes every 5 minutes.</p>
+<section class="hero">
+  <div class="hero-eyebrow">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    Real-time from OpenAlex
   </div>
+  <h1>Discover Research<br>That Matters</h1>
+  <p>Curated papers, ranked by impact. Auto-refreshes every 5 minutes.</p>
+</section>
 
-  <!-- Topics -->
-  <div class="topics" id="topics"></div>
+<div class="stats-strip" id="statsStrip">
+  <div class="stat-item"><span class="stat-num" id="statPapers">--</span><span class="stat-label">Papers</span></div>
+  <div class="stat-item"><span class="stat-num" id="statCites">--</span><span class="stat-label">Total Cites</span></div>
+  <div class="stat-item"><span class="stat-num" id="statOA">--</span><span class="stat-label">Open Access</span></div>
+  <div class="stat-item"><span class="stat-num" id="statAvgCite">--</span><span class="stat-label">Avg Cites</span></div>
+</div>
 
-  <!-- Filters -->
-  <div class="filters-bar" id="filtersBar">
-    <div class="filter-group">
+<div class="topic-grid" id="topics"></div>
+
+<div class="toolbar">
+  <div class="filter-row">
+    <div class="f-group">
       <label>From</label>
-      <select class="filter-select" id="yearFrom" title="Filter from year"></select>
+      <select class="f-select" id="yearFrom"></select>
     </div>
-    <div class="filter-group">
+    <div class="f-group">
       <label>To</label>
-      <select class="filter-select" id="yearTo" title="Filter to year"></select>
+      <select class="f-select" id="yearTo"></select>
     </div>
-    <div class="filter-divider"></div>
-    <label class="filter-checkbox">
-      <input type="checkbox" id="oaOnly"> Open Access only
-    </label>
+    <div class="f-sep"></div>
+    <label class="f-check"><input type="checkbox" id="oaOnly"> Open Access only</label>
   </div>
-
-  <!-- Error banner -->
-  <div class="error-banner" id="errorBanner"></div>
-
-  <!-- Result info + refresh -->
-  <div class="result-info" id="resultInfo">
-    <span id="resultCount"></span>
-    <div class="refresh-bar">
-      <span class="refresh-timer" id="refreshTimer"></span>
-      <button class="refresh-btn" id="refreshBtn" title="Refresh now">Refresh</button>
-    </div>
+  <div class="refresh-area">
+    <span class="timer" id="refreshTimer"></span>
+    <button id="refreshBtn">Refresh</button>
   </div>
+</div>
 
-  <!-- Feed -->
+<div class="result-bar" id="resultBar">
+  <span id="resultCount"></span>
+</div>
+
+<div class="error-banner" id="errorBanner"><div class="error-banner-inner" id="errorInner"></div></div>
+
+<section class="feed-area">
   <div id="feed">
     <div class="empty-state">
-      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <p>Select a research topic above to explore.</p>
+      <p>Select a research topic to explore.</p>
     </div>
   </div>
-</main>
+</section>
 
 <footer>
-  Data from <a href="https://openalex.org" target="_blank" rel="noopener">OpenAlex</a> —
-  an open catalog of the world's scholarly works.
+  Powered by <a href="https://openalex.org" target="_blank" rel="noopener">OpenAlex</a> &mdash; the open catalog of the world's scholarly works.
 </footer>
 
+</div>
+
 <script>
+// ─── Animated background ───
+(function initBg(){
+  const c=document.getElementById('bgCanvas'),ctx=c.getContext('2d');
+  let w,h;const orbs=[];
+  function resize(){w=c.width=window.innerWidth;h=c.height=window.innerHeight}
+  window.addEventListener('resize',resize);resize();
+
+  const colors=['rgba(124,92,252,','rgba(6,182,212,','rgba(244,63,94,','rgba(59,130,246,'];
+  for(let i=0;i<6;i++){
+    orbs.push({
+      x:Math.random()*w,y:Math.random()*h,
+      r:Math.random()*200+100,
+      dx:(Math.random()-.5)*.15,dy:(Math.random()-.5)*.15,
+      color:colors[i%colors.length]
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(const o of orbs){
+      o.x+=o.dx;o.y+=o.dy;
+      if(o.x<-o.r)o.x=w+o.r;if(o.x>w+o.r)o.x=-o.r;
+      if(o.y<-o.r)o.y=h+o.r;if(o.y>h+o.r)o.y=-o.r;
+      const g=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r);
+      g.addColorStop(0,o.color+'.06)');g.addColorStop(1,o.color+'0)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
 // ─── Config ───
-const TOPICS = [
-  { label: "High-Entropy Alloys", search: "high-entropy alloys", concepts: "C2778407723" },
-  { label: "Electrocatalysis", search: "electrocatalysis", concepts: "C159467904" },
-  { label: "ML for Materials", search: "machine learning materials science materials discovery" },
-  { label: "AI in Science", search: "artificial intelligence scientific discovery research" },
-  { label: "Engineering Physics", search: "engineering physics" },
-  { label: "Trending in MatSci", search: "materials science", concepts: "C192562407" },
+const TOPICS=[
+  {label:"High-Entropy Alloys",icon:"\u2697\uFE0F",sub:"Metallurgy",search:"high-entropy alloys",concepts:"C2778407723",color:"var(--purple)"},
+  {label:"Electrocatalysis",icon:"\u26A1",sub:"Chemistry",search:"electrocatalysis",concepts:"C159467904",color:"var(--cyan)"},
+  {label:"ML for Materials",icon:"\uD83E\uDD16",sub:"AI + MatSci",search:"machine learning materials science materials discovery",color:"var(--blue)"},
+  {label:"AI in Science",icon:"\uD83E\uDDE0",sub:"Broad AI",search:"artificial intelligence scientific discovery research",color:"var(--rose)"},
+  {label:"Eng. Physics",icon:"\uD83D\uDD2D",sub:"Physics",search:"engineering physics",color:"var(--amber)"},
+  {label:"Trending MatSci",icon:"\uD83D\uDD25",sub:"Materials",search:"materials science",concepts:"C192562407",color:"var(--orange)"},
 ];
 
-const OPENALEX_BASE = "https://api.openalex.org/works";
-const PER_PAGE = 25;
-const DISPLAY_COUNT = 15;
-const REFRESH_INTERVAL = 5 * 60 * 1000;
+const OPENALEX="https://api.openalex.org/works";
+const PER_PAGE=25,SHOW=15,FEATURED=3,REFRESH=5*60*1000;
 
 // ─── State ───
-let activeTopic = null;
-let loading = false;
-const cache = {};
-let refreshCountdown = null;
-let refreshIntervalId = null;
-let countdownIntervalId = null;
+let activeTopic=null,loading=false;
+const cache={};
+let refreshCountdown=null,refreshId=null,countdownId=null;
 
-// ─── DOM refs ───
-const topicsEl     = document.getElementById("topics");
-const feedEl       = document.getElementById("feed");
-const errorBanner  = document.getElementById("errorBanner");
-const sortSelect   = document.getElementById("sortSelect");
-const resultInfo   = document.getElementById("resultInfo");
-const resultCount  = document.getElementById("resultCount");
-const refreshTimer = document.getElementById("refreshTimer");
-const refreshBtn   = document.getElementById("refreshBtn");
-const yearFrom     = document.getElementById("yearFrom");
-const yearTo       = document.getElementById("yearTo");
-const oaOnly       = document.getElementById("oaOnly");
+// ─── DOM ───
+const topicsEl=document.getElementById('topics'),feedEl=document.getElementById('feed');
+const errorBanner=document.getElementById('errorBanner'),errorInner=document.getElementById('errorInner');
+const sortSelect=document.getElementById('sortSelect');
+const resultBar=document.getElementById('resultBar'),resultCount=document.getElementById('resultCount');
+const refreshTimer=document.getElementById('refreshTimer'),refreshBtn=document.getElementById('refreshBtn');
+const yearFrom=document.getElementById('yearFrom'),yearTo=document.getElementById('yearTo');
+const oaOnly=document.getElementById('oaOnly');
+const statPapers=document.getElementById('statPapers'),statCites=document.getElementById('statCites');
+const statOA=document.getElementById('statOA'),statAvgCite=document.getElementById('statAvgCite');
 
 // ─── Init ───
-(function init() {
-  populateYearFilters();
-  renderTopics();
-
-  sortSelect.addEventListener("change", () => {
-    if (activeTopic !== null) {
-      bustCacheAndReload();
-    }
-  });
-
-  yearFrom.addEventListener("change", () => {
-    if (activeTopic !== null) bustCacheAndReload();
-  });
-
-  yearTo.addEventListener("change", () => {
-    if (activeTopic !== null) bustCacheAndReload();
-  });
-
-  oaOnly.addEventListener("change", () => {
-    if (activeTopic !== null) bustCacheAndReload();
-  });
-
-  refreshBtn.addEventListener("click", () => {
-    if (activeTopic !== null && !loading) forceRefresh();
-  });
-
+(function init(){
+  populateYears();renderTopics();
+  sortSelect.addEventListener('change',()=>{if(activeTopic!==null)bust()});
+  yearFrom.addEventListener('change',()=>{if(activeTopic!==null)bust()});
+  yearTo.addEventListener('change',()=>{if(activeTopic!==null)bust()});
+  oaOnly.addEventListener('change',()=>{if(activeTopic!==null)bust()});
+  refreshBtn.addEventListener('click',()=>{if(activeTopic!==null&&!loading)forceRefresh()});
   selectTopic(5);
 })();
 
-function bustCacheAndReload() {
-  delete cache[cacheKeyFor(activeTopic)];
-  selectTopic(activeTopic);
-}
+function bust(){delete cache[cacheKey(activeTopic)];selectTopic(activeTopic)}
 
-function populateYearFilters() {
-  const currentYear = new Date().getFullYear();
-  const startYear = 2015;
-
-  // "From" defaults to 6 months logic, but we provide year options
-  yearFrom.innerHTML = '';
-  yearTo.innerHTML = '';
-
-  for (let y = currentYear; y >= startYear; y--) {
-    yearFrom.innerHTML += `<option value="${y}"${y === currentYear - 1 ? ' selected' : ''}>${y}</option>`;
-    yearTo.innerHTML += `<option value="${y}"${y === currentYear ? ' selected' : ''}>${y}</option>`;
+function populateYears(){
+  const cur=new Date().getFullYear();
+  for(let y=cur;y>=2015;y--){
+    yearFrom.innerHTML+=`<option value="${y}"${y===cur-1?' selected':''}>${y}</option>`;
+    yearTo.innerHTML+=`<option value="${y}"${y===cur?' selected':''}>${y}</option>`;
   }
 }
 
-function cacheKeyFor(index) {
-  return TOPICS[index].label + "|" + sortSelect.value + "|" + yearFrom.value + "-" + yearTo.value + "|" + oaOnly.checked;
-}
+function cacheKey(i){return TOPICS[i].label+'|'+sortSelect.value+'|'+yearFrom.value+'-'+yearTo.value+'|'+oaOnly.checked}
 
 // ─── Auto-refresh ───
-function startAutoRefresh() {
-  stopAutoRefresh();
-  refreshCountdown = REFRESH_INTERVAL / 1000;
-  updateCountdownDisplay();
-
-  countdownIntervalId = setInterval(() => {
-    refreshCountdown--;
-    updateCountdownDisplay();
-  }, 1000);
-
-  refreshIntervalId = setTimeout(() => {
-    forceRefresh();
-  }, REFRESH_INTERVAL);
+function startRefresh(){
+  stopRefresh();refreshCountdown=REFRESH/1000;updateTimer();
+  countdownId=setInterval(()=>{refreshCountdown--;updateTimer()},1000);
+  refreshId=setTimeout(forceRefresh,REFRESH);
 }
-
-function stopAutoRefresh() {
-  clearTimeout(refreshIntervalId);
-  clearInterval(countdownIntervalId);
-  refreshIntervalId = null;
-  countdownIntervalId = null;
+function stopRefresh(){clearTimeout(refreshId);clearInterval(countdownId)}
+function updateTimer(){
+  if(refreshCountdown<=0){refreshTimer.textContent='refreshing\u2026';return}
+  const m=Math.floor(refreshCountdown/60),s=refreshCountdown%60;
+  refreshTimer.textContent=m+':'+String(s).padStart(2,'0');
 }
+function forceRefresh(){if(activeTopic===null||loading)return;delete cache[cacheKey(activeTopic)];selectTopic(activeTopic)}
 
-function updateCountdownDisplay() {
-  if (refreshCountdown <= 0) {
-    refreshTimer.textContent = "refreshing\u2026";
-    return;
-  }
-  const m = Math.floor(refreshCountdown / 60);
-  const s = refreshCountdown % 60;
-  refreshTimer.textContent = `${m}:${s.toString().padStart(2, "0")}`;
-}
-
-function forceRefresh() {
-  if (activeTopic === null || loading) return;
-  delete cache[cacheKeyFor(activeTopic)];
-  selectTopic(activeTopic);
-}
-
-// ─── Render topic pills ───
-function renderTopics() {
-  topicsEl.innerHTML = "";
-  TOPICS.forEach((t, i) => {
-    const btn = document.createElement("button");
-    btn.className = "pill";
-    btn.textContent = t.label;
-    btn.addEventListener("click", () => selectTopic(i));
-    topicsEl.appendChild(btn);
+// ─── Topics ───
+function renderTopics(){
+  topicsEl.innerHTML='';
+  TOPICS.forEach((t,i)=>{
+    const b=document.createElement('button');
+    b.className='topic-card';b.style.setProperty('--tc-color',t.color);
+    b.innerHTML=`<span class="tc-icon">${t.icon}</span><span class="tc-label">${esc(t.label)}</span><span class="tc-sub">${esc(t.sub)}</span>`;
+    b.addEventListener('click',()=>selectTopic(i));
+    topicsEl.appendChild(b);
   });
 }
 
-function updatePillStates() {
-  const pills = topicsEl.querySelectorAll(".pill");
-  pills.forEach((p, i) => {
-    p.classList.toggle("active", i === activeTopic);
-    p.disabled = loading;
+function updatePills(){
+  topicsEl.querySelectorAll('.topic-card').forEach((p,i)=>{
+    p.classList.toggle('active',i===activeTopic);p.disabled=loading;
   });
-  refreshBtn.disabled = loading;
+  refreshBtn.disabled=loading;
 }
 
 // ─── Select topic ───
-async function selectTopic(index) {
-  if (loading) return;
+async function selectTopic(i){
+  if(loading)return;hideError();activeTopic=i;
+  const t=TOPICS[i],sort=sortSelect.value,key=cacheKey(i);
+  if(cache[key]&&Date.now()-cache[key].ts<REFRESH){
+    render(cache[key].cards,t,cache[key].total);updatePills();startRefresh();return;
+  }
+  loading=true;updatePills();showSkeletons();
+  try{
+    const{papers,totalCount}=await fetchOA(t,sort);
+    cache[key]={cards:papers,ts:Date.now(),total:totalCount};
+    render(papers,t,totalCount);startRefresh();
+  }catch(e){showError(e.message||'Something went wrong.');feedEl.innerHTML='';resultBar.classList.remove('visible')}
+  finally{loading=false;updatePills()}
+}
 
-  hideError();
-  activeTopic = index;
-  const topic = TOPICS[index];
-  const sort = sortSelect.value;
-  const key = cacheKeyFor(index);
+// ─── OpenAlex ───
+function buildUrl(t,sort){
+  const p=new URLSearchParams();
+  p.set('per_page',PER_PAGE);p.set('mailto','research-radar@users.noreply.github.com');
+  const fy=+yearFrom.value,ty=+yearTo.value;
+  let f=`from_publication_date:${fy}-01-01,to_publication_date:${ty}-12-31,type:article|review`;
+  if(t.concepts)f+=`,concepts.id:${t.concepts}`;
+  if(oaOnly.checked)f+=`,open_access.is_oa:true`;
+  p.set('filter',f);p.set('search',t.search);
+  const sorts={hot:'cited_by_count:desc',cited:'cited_by_count:desc',relevant:'relevance_score:desc',recent:'publication_date:desc'};
+  p.set('sort',sorts[sort]||sorts.recent);
+  return OPENALEX+'?'+p;
+}
 
-  if (cache[key] && Date.now() - cache[key].ts < REFRESH_INTERVAL) {
-    renderCards(cache[key].cards, topic.label, cache[key].totalCount);
-    updatePillStates();
-    startAutoRefresh();
+async function fetchOA(topic,sort){
+  const r=await fetch(buildUrl(topic,sort));
+  if(!r.ok)throw new Error('OpenAlex returned '+r.status);
+  const d=await r.json(),total=d.meta?.count||0;
+  let papers=(d.results||[]).map(w=>{
+    const au=(w.authorships||[]).slice(0,4).map(a=>a.author?.display_name).filter(Boolean).join(', ');
+    const suf=(w.authorships||[]).length>4?' et al.':'';
+    let url=w.doi||w.primary_location?.landing_page_url||w.ids?.openalex||'';
+    const src=w.primary_location?.source?.display_name||'';
+    const date=w.publication_date||'';
+    let abs='';if(w.abstract_inverted_index)abs=rebuildAbstract(w.abstract_inverted_index);
+    const oa=w.open_access?.is_oa||false,oaUrl=w.open_access?.oa_url||'';
+    const cited=w.cited_by_count||0;
+    let vel=0;if(date&&cited>0){vel=cited/Math.max(1,(Date.now()-new Date(date))/864e5)}
+    return{title:w.display_name||w.title||'Untitled',url,authors:au+suf,source:src,date,summary:abs,cited_by_count:cited,velocity:vel,is_oa:oa,oa_url:oaUrl};
+  });
+  if(sort==='hot')papers.sort((a,b)=>b.velocity-a.velocity);
+  return{papers:papers.slice(0,SHOW),totalCount:total};
+}
+
+function rebuildAbstract(inv){
+  if(!inv)return'';const w=[];
+  for(const[word,pos]of Object.entries(inv))for(const p of pos)w[p]=word;
+  const t=w.join(' ');return t.length>400?t.slice(0,400).replace(/\s\S*$/,'')+'\u2026':t;
+}
+
+// ─── Stats ───
+function updateStats(cards){
+  const total=cards.length;
+  const cites=cards.reduce((s,c)=>s+c.cited_by_count,0);
+  const oa=cards.filter(c=>c.is_oa).length;
+  const avg=total?Math.round(cites/total):0;
+  animateNum(statPapers,total);animateNum(statCites,cites);
+  animateNum(statOA,oa);animateNum(statAvgCite,avg);
+}
+
+function animateNum(el,target){
+  const start=parseInt(el.textContent)||0;
+  if(start===target){el.textContent=target.toLocaleString();return}
+  const dur=600,t0=performance.now();
+  function tick(now){
+    const p=Math.min(1,(now-t0)/dur);
+    const eased=1-Math.pow(1-p,3);
+    el.textContent=Math.round(start+(target-start)*eased).toLocaleString();
+    if(p<1)requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ─── Render ───
+function render(cards,topic,total){
+  updateStats(cards);
+
+  if(total!==undefined){
+    resultCount.textContent=`${cards.length} of ${total.toLocaleString()} results \u00b7 ${yearFrom.value}\u2013${yearTo.value}`;
+    resultBar.classList.add('visible');
+  }
+
+  if(!cards.length){
+    feedEl.innerHTML='<div class="empty-state"><p>No results. Adjust filters or try another topic.</p></div>';
     return;
   }
 
-  loading = true;
-  updatePillStates();
-  showSkeletons();
+  const hotTh=computeHot(cards);
+  const maxCite=Math.max(...cards.map(c=>c.cited_by_count),1);
+  feedEl.innerHTML='';
 
-  try {
-    const { papers, totalCount } = await fetchFromOpenAlex(topic, sort);
-    cache[key] = { cards: papers, ts: Date.now(), totalCount };
-    renderCards(papers, topic.label, totalCount);
-    startAutoRefresh();
-  } catch (err) {
-    showError(err.message || "Something went wrong.");
-    feedEl.innerHTML = "";
-    resultInfo.classList.remove("visible");
-  } finally {
-    loading = false;
-    updatePillStates();
-  }
-}
+  // Featured (top 3)
+  const featured=cards.slice(0,FEATURED);
+  const rest=cards.slice(FEATURED);
 
-// ─── Build OpenAlex URL ───
-function buildOpenAlexUrl(topic, sort) {
-  const params = new URLSearchParams();
-  params.set("per_page", PER_PAGE);
-  params.set("mailto", "research-radar@users.noreply.github.com");
+  const fGrid=document.createElement('div');fGrid.className='featured-grid';
+  featured.forEach((c,i)=>{
+    const el=document.createElement('div');el.className='f-card';
+    el.style.animationDelay=i*.1+'s';
+    const link=c.is_oa&&c.oa_url?c.oa_url:c.url;
+    const titleH=link?`<a href="${esc(link)}" target="_blank" rel="noopener">${esc(c.title)}</a>`:esc(c.title);
+    const isHot=c.velocity>=hotTh&&c.velocity>0;
+    const meta=[c.source,fmtDate(c.date),c.authors].filter(Boolean);
 
-  // Use year filters
-  const fromYear = parseInt(yearFrom.value);
-  const toYear = parseInt(yearTo.value);
-  const fromDate = `${fromYear}-01-01`;
-  const toDate = `${toYear}-12-31`;
-
-  let filter = `from_publication_date:${fromDate},to_publication_date:${toDate},type:article|review`;
-
-  if (topic.concepts) {
-    filter += `,concepts.id:${topic.concepts}`;
-  }
-
-  if (oaOnly.checked) {
-    filter += `,open_access.is_oa:true`;
-  }
-
-  params.set("filter", filter);
-  params.set("search", topic.search);
-
-  switch (sort) {
-    case "hot":
-      params.set("sort", "cited_by_count:desc");
-      break;
-    case "cited":
-      params.set("sort", "cited_by_count:desc");
-      break;
-    case "relevant":
-      params.set("sort", "relevance_score:desc");
-      break;
-    case "recent":
-    default:
-      params.set("sort", "publication_date:desc");
-      break;
-  }
-
-  return `${OPENALEX_BASE}?${params.toString()}`;
-}
-
-// ─── Fetch from OpenAlex ───
-async function fetchFromOpenAlex(topic, sort) {
-  const url = buildOpenAlexUrl(topic, sort);
-  const resp = await fetch(url);
-
-  if (!resp.ok) {
-    throw new Error(`OpenAlex returned ${resp.status}. Try again in a moment.`);
-  }
-
-  const data = await resp.json();
-  const totalCount = data.meta?.count || 0;
-
-  let papers = (data.results || []).map(work => {
-    const authors = (work.authorships || [])
-      .slice(0, 4)
-      .map(a => a.author?.display_name)
-      .filter(Boolean)
-      .join(", ");
-    const authorSuffix = (work.authorships || []).length > 4 ? " et al." : "";
-
-    let url = "";
-    if (work.doi) url = work.doi;
-    else if (work.primary_location?.landing_page_url) url = work.primary_location.landing_page_url;
-    else if (work.ids?.openalex) url = work.ids.openalex;
-
-    const source = work.primary_location?.source?.display_name || "";
-    const pubDate = work.publication_date || "";
-
-    let abstract = "";
-    if (work.abstract_inverted_index) {
-      abstract = reconstructAbstract(work.abstract_inverted_index);
-    }
-
-    const isOA = work.open_access?.is_oa || false;
-    const oaUrl = work.open_access?.oa_url || "";
-    const citedBy = work.cited_by_count || 0;
-
-    let velocity = 0;
-    if (pubDate && citedBy > 0) {
-      const daysSince = Math.max(1, (Date.now() - new Date(pubDate).getTime()) / 86400000);
-      velocity = citedBy / daysSince;
-    }
-
-    return {
-      title: work.display_name || work.title || "Untitled",
-      url,
-      authors: authors + authorSuffix,
-      source,
-      date: pubDate,
-      summary: abstract,
-      cited_by_count: citedBy,
-      velocity,
-      is_oa: isOA,
-      oa_url: oaUrl,
-    };
-  });
-
-  if (sort === "hot") {
-    papers.sort((a, b) => b.velocity - a.velocity);
-  }
-
-  papers = papers.slice(0, DISPLAY_COUNT);
-  return { papers, totalCount };
-}
-
-// ─── Reconstruct abstract from inverted index ───
-function reconstructAbstract(invertedIndex) {
-  if (!invertedIndex) return "";
-  const words = [];
-  for (const [word, positions] of Object.entries(invertedIndex)) {
-    for (const pos of positions) {
-      words[pos] = word;
-    }
-  }
-  const text = words.join(" ");
-  if (text.length > 350) {
-    return text.slice(0, 350).replace(/\s\S*$/, "") + "\u2026";
-  }
-  return text;
-}
-
-// ─── Compute "hot" threshold ───
-function computeHotThreshold(cards) {
-  if (!cards.length) return Infinity;
-  const velocities = cards.map(c => c.velocity).filter(v => v > 0);
-  if (!velocities.length) return Infinity;
-  velocities.sort((a, b) => b - a);
-  return velocities[Math.max(0, Math.floor(velocities.length * 0.3) - 1)] || velocities[0];
-}
-
-// ─── Format date nicely ───
-function formatDate(dateStr) {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-// ─── Render cards ───
-function renderCards(cards, topicLabel, totalCount) {
-  if (totalCount !== undefined) {
-    const fromY = yearFrom.value;
-    const toY = yearTo.value;
-    resultCount.textContent = `${cards.length} of ${totalCount.toLocaleString()} results \u00b7 ${fromY}\u2013${toY}`;
-    resultInfo.classList.add("visible");
-  }
-
-  if (!cards.length) {
-    feedEl.innerHTML = `<div class="empty-state">
-      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <p>No results found. Adjust the filters or try another topic.</p>
-    </div>`;
-    return;
-  }
-
-  const hotThreshold = computeHotThreshold(cards);
-
-  feedEl.innerHTML = "";
-  cards.forEach((c, i) => {
-    const isFirst = i === 0;
-    const card = document.createElement("div");
-    card.className = isFirst ? "card-hero" : "card";
-    card.style.animationDelay = `${i * 0.05}s`;
-
-    const linkUrl = c.is_oa && c.oa_url ? c.oa_url : c.url;
-    const titleHtml = linkUrl
-      ? `<a href="${escapeHtml(linkUrl)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
-      : escapeHtml(c.title);
-
-    const isHot = c.velocity >= hotThreshold && c.velocity > 0;
-    const hotBadge = isHot ? `<span class="badge-hot">\u{1F525} Hot</span>` : "";
-
-    const citeHtml = c.cited_by_count > 0
-      ? `<span class="cite-count">${c.cited_by_count} cited</span>`
-      : "";
-
-    const oaHtml = c.is_oa ? `<span class="open-access">\u{1F513} Open Access</span>` : "";
-
-    const heroLabel = isFirst ? `<span class="hero-label">\u2B50 Top Pick</span>` : "";
-
-    const yearStr = c.date ? c.date.split("-")[0] : "";
-    const yearBadge = yearStr ? `<span class="year-badge">${yearStr}</span>` : "";
-
-    // Build meta items
-    const metaParts = [];
-    if (c.source) metaParts.push(escapeHtml(c.source));
-    if (c.date) metaParts.push(formatDate(c.date));
-    if (c.authors) metaParts.push(escapeHtml(c.authors));
-
-    const metaHtml = metaParts.length
-      ? `<div class="meta">${metaParts.join('<span class="meta-dot"></span>')}</div>`
-      : "";
-
-    const abstractHtml = c.summary
-      ? `<div class="abstract">${escapeHtml(c.summary)}</div>`
-      : "";
-
-    card.innerHTML = `
-      <div class="card-badges">
-        ${heroLabel}
-        <span class="card-topic">${escapeHtml(topicLabel)}</span>
-        ${hotBadge}
-        ${yearBadge}
+    el.innerHTML=`
+      <div class="rank-badge">${i+1}</div>
+      <div class="f-badges">
+        <span class="badge badge-topic">${esc(topic.label)}</span>
+        ${isHot?'<span class="badge badge-hot">\uD83D\uDD25 Hot</span>':''}
+        ${c.is_oa?'<span class="badge badge-oa">\uD83D\uDD13 OA</span>':''}
+        ${c.date?`<span class="badge badge-year">${c.date.split('-')[0]}</span>`:''}
       </div>
-      <div class="card-header">
-        <h3>${titleHtml}${oaHtml}</h3>
-        <div class="card-stats">${citeHtml}</div>
-      </div>
-      ${metaHtml}
-      ${abstractHtml}
-    `;
-    feedEl.appendChild(card);
+      <h3>${titleH}</h3>
+      <div class="f-meta">${meta.map(esc).join('<span class="meta-sep"></span>')}</div>
+      ${c.summary?`<div class="f-abstract">${esc(c.summary)}</div>`:''}
+      <div class="f-footer">
+        ${c.cited_by_count>0?`<span class="badge badge-cite">${c.cited_by_count} cited</span>`:''}
+      </div>`;
+    fGrid.appendChild(el);
   });
+  feedEl.appendChild(fGrid);
+
+  // Rest
+  if(rest.length){
+    const list=document.createElement('div');list.className='card-list';
+    rest.forEach((c,i)=>{
+      const idx=FEATURED+i;
+      const el=document.createElement('div');el.className='card';
+      el.style.animationDelay=(FEATURED+i)*.04+'s';
+      const link=c.is_oa&&c.oa_url?c.oa_url:c.url;
+      const titleH=link?`<a href="${esc(link)}" target="_blank" rel="noopener">${esc(c.title)}</a>`:esc(c.title);
+      const isHot=c.velocity>=hotTh&&c.velocity>0;
+      const meta=[c.source,fmtDate(c.date),c.authors].filter(Boolean);
+      const citeW=Math.round((c.cited_by_count/maxCite)*100);
+
+      el.innerHTML=`
+        <div class="card-rank">${idx+1}</div>
+        <div class="card-body">
+          <div class="cb-badges">
+            ${isHot?'<span class="badge badge-hot">\uD83D\uDD25 Hot</span>':''}
+            ${c.is_oa?'<span class="badge badge-oa">OA</span>':''}
+            ${c.date?`<span class="badge badge-year">${c.date.split('-')[0]}</span>`:''}
+          </div>
+          <h3>${titleH}</h3>
+          <div class="cb-meta">${meta.map(esc).join('<span class="meta-sep"></span>')}</div>
+          ${c.summary?`<div class="cb-abstract">${esc(c.summary)}</div>`:''}
+        </div>
+        <div class="card-side">
+          ${c.cited_by_count>0?`<span class="badge badge-cite">${c.cited_by_count}</span>
+          <div class="cite-bar"><div class="cite-bar-visual"><div class="cite-bar-fill" style="width:${citeW}%"></div></div></div>`:''}
+        </div>`;
+      list.appendChild(el);
+    });
+    feedEl.appendChild(list);
+  }
+}
+
+function computeHot(cards){
+  if(!cards.length)return Infinity;
+  const v=cards.map(c=>c.velocity).filter(v=>v>0);
+  if(!v.length)return Infinity;v.sort((a,b)=>b-a);
+  return v[Math.max(0,Math.floor(v.length*.3)-1)]||v[0];
+}
+
+function fmtDate(d){
+  if(!d)return'';
+  return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 }
 
 // ─── Skeletons ───
-function showSkeletons() {
-  resultInfo.classList.remove("visible");
-  feedEl.innerHTML = "";
-
-  // Hero skeleton
-  const heroSkel = document.createElement("div");
-  heroSkel.className = "skeleton skeleton-hero";
-  heroSkel.innerHTML = `
-    <div class="skeleton-line"></div>
-    <div class="skeleton-line"></div>
-    <div class="skeleton-line"></div>
-    <div class="skeleton-line"></div>
-  `;
-  feedEl.appendChild(heroSkel);
-
-  for (let i = 0; i < 5; i++) {
-    const s = document.createElement("div");
-    s.className = "skeleton";
-    s.innerHTML = `
-      <div class="skeleton-line"></div>
-      <div class="skeleton-line"></div>
-      <div class="skeleton-line"></div>
-      <div class="skeleton-line"></div>
-    `;
+function showSkeletons(){
+  resultBar.classList.remove('visible');feedEl.innerHTML='';
+  const fg=document.createElement('div');fg.className='featured-grid';
+  for(let i=0;i<3;i++){
+    const s=document.createElement('div');
+    s.className='skel'+(i===0?' skel-lg':'');
+    s.innerHTML='<div class="skel-line"></div><div class="skel-line"></div><div class="skel-line"></div><div class="skel-line"></div>';
+    fg.appendChild(s);
+  }
+  feedEl.appendChild(fg);
+  for(let i=0;i<4;i++){
+    const s=document.createElement('div');s.className='skel';
+    s.innerHTML='<div class="skel-line"></div><div class="skel-line"></div><div class="skel-line"></div><div class="skel-line"></div>';
     feedEl.appendChild(s);
   }
 }
 
-// ─── Error handling ───
-function showError(msg) {
-  errorBanner.textContent = msg;
-  errorBanner.style.display = "block";
-}
-
-function hideError() {
-  errorBanner.style.display = "none";
-}
+// ─── Error ───
+function showError(m){errorInner.textContent=m;errorBanner.style.display='block'}
+function hideError(){errorBanner.style.display='none'}
 
 // ─── Util ───
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
-}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 </script>
 
 </body>
