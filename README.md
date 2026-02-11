@@ -1,6 +1,6 @@
 # Research Radar
 
-A live research paper feed for materials science researchers. Uses the Anthropic API with web search to pull the latest papers, breakthroughs, and articles across specific research topics.
+A live research paper feed for materials science researchers. Pulls real papers from [OpenAlex](https://openalex.org) — an open catalog of the world's scholarly works. No API key needed.
 
 ## Topics
 
@@ -13,9 +13,10 @@ A live research paper feed for materials science researchers. Uses the Anthropic
 
 ## How it works
 
-1. Enter your Anthropic API key (stored only in `sessionStorage`, sent only to `api.anthropic.com`)
-2. Click a topic pill to fetch live results
-3. Results are cached for 5 minutes per topic
+1. Click a topic pill — papers load instantly from OpenAlex
+2. Sort by Most Recent, Most Cited, or Most Relevant
+3. Results show title, authors, journal, abstract, citation count, and open-access links
+4. 10-minute client-side cache per topic/sort combo
 
 ## Deploy
 

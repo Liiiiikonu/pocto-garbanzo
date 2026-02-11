@@ -53,39 +53,38 @@
 
   .logo svg { flex-shrink: 0; }
 
-  .api-section {
+  .header-right {
     display: flex;
     align-items: center;
-    gap: .5rem;
+    gap: .75rem;
+    font-size: .8rem;
+    color: var(--text-muted);
   }
 
-  .api-section input {
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .4; }
+  }
+
+  .sort-select {
     background: var(--bg);
     border: 1px solid var(--border);
     color: var(--text);
-    padding: .45rem .75rem;
+    padding: .35rem .6rem;
     border-radius: var(--radius);
-    font-size: .85rem;
-    width: 280px;
-    transition: border-color .2s;
+    font-size: .8rem;
+    cursor: pointer;
   }
 
-  .api-section input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow);
-  }
-
-  .api-status {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--red);
-    transition: background .3s;
-    flex-shrink: 0;
-  }
-
-  .api-status.connected { background: var(--green); }
+  .sort-select:focus { outline: none; border-color: var(--accent); }
 
   /* ── Main layout ── */
   main {
@@ -150,6 +149,19 @@
     cursor: not-allowed;
   }
 
+  /* ── Result count ── */
+  .result-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: .8rem;
+    color: var(--text-muted);
+    display: none;
+  }
+
+  .result-info.visible { display: flex; }
+
   /* ── Feed ── */
   #feed {
     display: flex;
@@ -168,6 +180,14 @@
 
   .card:hover { border-color: var(--accent); }
 
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: .35rem;
+  }
+
   .card-topic {
     display: inline-block;
     font-size: .7rem;
@@ -183,6 +203,7 @@
     font-weight: 600;
     margin-bottom: .35rem;
     line-height: 1.4;
+    flex: 1;
   }
 
   .card h3 a {
@@ -202,6 +223,30 @@
     font-size: .9rem;
     color: var(--text-muted);
     line-height: 1.65;
+  }
+
+  .cite-count {
+    font-size: .7rem;
+    color: var(--amber);
+    background: rgba(251, 191, 36, .1);
+    border: 1px solid rgba(251, 191, 36, .2);
+    padding: .15rem .5rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .open-access {
+    display: inline-block;
+    font-size: .65rem;
+    font-weight: 600;
+    color: var(--green);
+    background: rgba(52, 211, 153, .1);
+    border: 1px solid rgba(52, 211, 153, .2);
+    padding: .1rem .4rem;
+    border-radius: 4px;
+    margin-left: .5rem;
+    vertical-align: middle;
   }
 
   @keyframes fadeUp {
@@ -256,11 +301,23 @@
     display: none;
   }
 
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: .75rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
   /* ── Responsive ── */
   @media (max-width: 640px) {
     header { padding: 1rem; }
-    .api-section input { width: 180px; }
     main { padding: 1.5rem 1rem 3rem; }
+    .card-header { flex-direction: column; gap: .5rem; }
   }
 
   /* ── Scrollbar ── */
@@ -288,15 +345,14 @@
     </svg>
     Research Radar
   </div>
-  <div class="api-section">
-    <div class="api-status" id="apiStatus" title="API not connected"></div>
-    <input
-      type="password"
-      id="apiKeyInput"
-      placeholder="sk-ant-… Anthropic API key"
-      autocomplete="off"
-      spellcheck="false"
-    />
+  <div class="header-right">
+    <div class="live-dot" title="Powered by OpenAlex"></div>
+    <span>Powered by OpenAlex</span>
+    <select class="sort-select" id="sortSelect" title="Sort results">
+      <option value="recent">Most Recent</option>
+      <option value="cited">Most Cited</option>
+      <option value="relevant">Most Relevant</option>
+    </select>
   </div>
 </header>
 
@@ -304,7 +360,7 @@
 <main>
   <div class="intro">
     <h2>Live Research Feed</h2>
-    <p>Click a topic below to pull the latest papers, breakthroughs, and articles via web search.</p>
+    <p>Click a topic to pull the latest papers from OpenAlex — no API key needed.</p>
   </div>
 
   <!-- Topics -->
@@ -313,29 +369,62 @@
   <!-- Error banner -->
   <div class="error-banner" id="errorBanner"></div>
 
+  <!-- Result info -->
+  <div class="result-info" id="resultInfo">
+    <span id="resultCount"></span>
+    <span id="resultSource"></span>
+  </div>
+
   <!-- Feed -->
   <div id="feed">
     <div class="empty-state">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <p>Enter your API key above, then select a topic to begin.</p>
+      <p>Select a research topic above to get started.</p>
     </div>
   </div>
 </main>
 
+<footer>
+  Data from <a href="https://openalex.org" target="_blank" rel="noopener">OpenAlex</a>,
+  an open catalog of the world's scholarly works.
+</footer>
+
 <script>
 // ─── Config ───
 const TOPICS = [
-  { label: "High-Entropy Alloys",   query: "latest research papers and breakthroughs on high-entropy alloys in materials science" },
-  { label: "Electrocatalysis",      query: "latest research papers and breakthroughs in electrocatalysis for energy conversion" },
-  { label: "ML for Materials",      query: "latest research on machine learning and AI applied to materials discovery and design" },
-  { label: "AI in Science",         query: "new and novel ways artificial intelligence is being used in scientific research and discovery" },
-  { label: "Engineering Physics",   query: "latest research papers and advances in engineering physics" },
-  { label: "Trending in MatSci",    query: "trending and most-discussed topics in materials science research this month" },
+  {
+    label: "High-Entropy Alloys",
+    search: "high-entropy alloys",
+    concepts: "C2778407723",
+  },
+  {
+    label: "Electrocatalysis",
+    search: "electrocatalysis",
+    concepts: "C159467904",
+  },
+  {
+    label: "ML for Materials",
+    search: "machine learning materials science",
+  },
+  {
+    label: "AI in Science",
+    search: "artificial intelligence scientific discovery",
+  },
+  {
+    label: "Engineering Physics",
+    search: "engineering physics",
+  },
+  {
+    label: "Trending in MatSci",
+    search: "materials science",
+    concepts: "C192562407",
+  },
 ];
 
-const API_URL = "https://api.anthropic.com/v1/messages";
+const OPENALEX_BASE = "https://api.openalex.org/works";
+const PER_PAGE = 15;
 
 // ─── State ───
 let activeTopic = null;
@@ -343,42 +432,25 @@ let loading = false;
 const cache = {};
 
 // ─── DOM refs ───
-const apiKeyInput  = document.getElementById("apiKeyInput");
-const apiStatus    = document.getElementById("apiStatus");
-const topicsEl     = document.getElementById("topics");
-const feedEl       = document.getElementById("feed");
-const errorBanner  = document.getElementById("errorBanner");
+const topicsEl    = document.getElementById("topics");
+const feedEl      = document.getElementById("feed");
+const errorBanner = document.getElementById("errorBanner");
+const sortSelect  = document.getElementById("sortSelect");
+const resultInfo  = document.getElementById("resultInfo");
+const resultCount = document.getElementById("resultCount");
+const resultSource = document.getElementById("resultSource");
 
 // ─── Init ───
 (function init() {
-  const saved = sessionStorage.getItem("rr_api_key");
-  if (saved) {
-    apiKeyInput.value = saved;
-    setConnected(true);
-  }
-
-  apiKeyInput.addEventListener("input", () => {
-    const key = apiKeyInput.value.trim();
-    if (key) {
-      sessionStorage.setItem("rr_api_key", key);
-      setConnected(true);
-    } else {
-      sessionStorage.removeItem("rr_api_key");
-      setConnected(false);
+  renderTopics();
+  sortSelect.addEventListener("change", () => {
+    if (activeTopic !== null) {
+      // Clear cache for this topic so it re-fetches with new sort
+      delete cache[TOPICS[activeTopic].label + sortSelect.value];
+      selectTopic(activeTopic);
     }
   });
-
-  renderTopics();
 })();
-
-function setConnected(yes) {
-  apiStatus.classList.toggle("connected", yes);
-  apiStatus.title = yes ? "API key set" : "API not connected";
-}
-
-function getApiKey() {
-  return (apiKeyInput.value || "").trim();
-}
 
 // ─── Render topic pills ───
 function renderTopics() {
@@ -403,19 +475,16 @@ function updatePillStates() {
 // ─── Select topic ───
 async function selectTopic(index) {
   if (loading) return;
-  if (!getApiKey()) {
-    showError("Please enter your Anthropic API key first.");
-    return;
-  }
 
   hideError();
   activeTopic = index;
   const topic = TOPICS[index];
+  const sort = sortSelect.value;
 
-  // Check cache (5 min TTL)
-  const cacheKey = topic.label;
-  if (cache[cacheKey] && Date.now() - cache[cacheKey].ts < 5 * 60 * 1000) {
-    renderCards(cache[cacheKey].cards, topic.label);
+  // Check cache (10 min TTL)
+  const cacheKey = topic.label + sort;
+  if (cache[cacheKey] && Date.now() - cache[cacheKey].ts < 10 * 60 * 1000) {
+    renderCards(cache[cacheKey].cards, topic.label, cache[cacheKey].totalCount);
     updatePillStates();
     return;
   }
@@ -425,85 +494,149 @@ async function selectTopic(index) {
   showSkeletons();
 
   try {
-    const results = await fetchResearch(topic);
-    cache[cacheKey] = { cards: results, ts: Date.now() };
-    renderCards(results, topic.label);
+    const { papers, totalCount } = await fetchFromOpenAlex(topic, sort);
+    cache[cacheKey] = { cards: papers, ts: Date.now(), totalCount };
+    renderCards(papers, topic.label, totalCount);
   } catch (err) {
     showError(err.message || "Something went wrong.");
     feedEl.innerHTML = "";
+    resultInfo.classList.remove("visible");
   } finally {
     loading = false;
     updatePillStates();
   }
 }
 
-// ─── Anthropic API call with web search ───
-async function fetchResearch(topic) {
-  const systemPrompt = `You are a research assistant for a materials science researcher. The user wants the latest research papers, breakthroughs, and notable articles for a given topic.
+// ─── Build OpenAlex URL ───
+function buildOpenAlexUrl(topic, sort) {
+  const params = new URLSearchParams();
+  params.set("per_page", PER_PAGE);
+  params.set("mailto", "research-radar@users.noreply.github.com");
 
-Use the web search tool to find the most recent and relevant results. Then return ONLY a JSON array (no markdown, no wrapping) of objects with these fields:
-- "title": paper or article title
-- "url": link to the source (use actual URLs from search results)
-- "authors": authors if available, otherwise empty string
-- "source": journal, preprint server, or website name
-- "date": publication date if available, otherwise empty string
-- "summary": 2-3 sentence summary of the key findings or contribution
+  // Date filter: last 12 months
+  const now = new Date();
+  const yearAgo = new Date(now);
+  yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+  const fromDate = yearAgo.toISOString().split("T")[0];
 
-Return 6-10 results. Sort by relevance and recency. Return ONLY valid JSON, no other text.`;
+  let filter = `from_publication_date:${fromDate}`;
 
-  const resp = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": getApiKey(),
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true",
-    },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 4096,
-      tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 5 }],
-      system: systemPrompt,
-      messages: [
-        { role: "user", content: topic.query }
-      ],
-    }),
-  });
+  // If topic has a concept ID, use it for better precision
+  if (topic.concepts) {
+    filter += `,concepts.id:${topic.concepts}`;
+  }
+
+  params.set("filter", filter);
+  params.set("search", topic.search);
+
+  // Sort
+  switch (sort) {
+    case "cited":
+      params.set("sort", "cited_by_count:desc");
+      break;
+    case "relevant":
+      params.set("sort", "relevance_score:desc");
+      break;
+    case "recent":
+    default:
+      params.set("sort", "publication_date:desc");
+      break;
+  }
+
+  return `${OPENALEX_BASE}?${params.toString()}`;
+}
+
+// ─── Fetch from OpenAlex ───
+async function fetchFromOpenAlex(topic, sort) {
+  const url = buildOpenAlexUrl(topic, sort);
+  const resp = await fetch(url);
 
   if (!resp.ok) {
-    const body = await resp.json().catch(() => ({}));
-    if (resp.status === 401) throw new Error("Invalid API key. Please check and re-enter.");
-    throw new Error(body.error?.message || `API error ${resp.status}`);
+    throw new Error(`OpenAlex returned ${resp.status}. Try again in a moment.`);
   }
 
   const data = await resp.json();
+  const totalCount = data.meta?.count || 0;
 
-  // Extract text blocks from the response
-  let text = "";
-  for (const block of data.content) {
-    if (block.type === "text") {
-      text += block.text;
+  const papers = (data.results || []).map(work => {
+    // Authors
+    const authors = (work.authorships || [])
+      .slice(0, 4)
+      .map(a => a.author?.display_name)
+      .filter(Boolean)
+      .join(", ");
+    const authorSuffix = (work.authorships || []).length > 4 ? " et al." : "";
+
+    // Best URL: prefer DOI, then landing page
+    let url = "";
+    if (work.doi) {
+      url = work.doi;
+    } else if (work.primary_location?.landing_page_url) {
+      url = work.primary_location.landing_page_url;
+    } else if (work.ids?.openalex) {
+      url = work.ids.openalex;
+    }
+
+    // Source / journal
+    const source = work.primary_location?.source?.display_name || "";
+
+    // Publication date
+    const date = work.publication_date || "";
+
+    // Abstract
+    let abstract = "";
+    if (work.abstract_inverted_index) {
+      abstract = reconstructAbstract(work.abstract_inverted_index);
+    }
+
+    // Open access
+    const isOA = work.open_access?.is_oa || false;
+    const oaUrl = work.open_access?.oa_url || "";
+
+    return {
+      title: work.display_name || work.title || "Untitled",
+      url,
+      authors: authors + authorSuffix,
+      source,
+      date,
+      summary: abstract,
+      cited_by_count: work.cited_by_count || 0,
+      is_oa: isOA,
+      oa_url: oaUrl,
+    };
+  });
+
+  return { papers, totalCount };
+}
+
+// ─── Reconstruct abstract from inverted index ───
+function reconstructAbstract(invertedIndex) {
+  if (!invertedIndex) return "";
+  const words = [];
+  for (const [word, positions] of Object.entries(invertedIndex)) {
+    for (const pos of positions) {
+      words[pos] = word;
     }
   }
-
-  // Parse JSON from the response
-  const jsonMatch = text.match(/\[[\s\S]*\]/);
-  if (!jsonMatch) throw new Error("Could not parse results. Try again.");
-
-  let papers;
-  try {
-    papers = JSON.parse(jsonMatch[0]);
-  } catch {
-    throw new Error("Malformed response. Try again.");
+  const text = words.join(" ");
+  // Truncate to ~300 chars
+  if (text.length > 300) {
+    return text.slice(0, 300).replace(/\s\S*$/, "") + "...";
   }
-
-  return papers;
+  return text;
 }
 
 // ─── Render cards ───
-function renderCards(cards, topicLabel) {
+function renderCards(cards, topicLabel, totalCount) {
+  // Result info bar
+  if (totalCount !== undefined) {
+    resultCount.textContent = `${cards.length} of ${totalCount.toLocaleString()} results`;
+    resultSource.textContent = `Last 12 months via OpenAlex`;
+    resultInfo.classList.add("visible");
+  }
+
   if (!cards.length) {
-    feedEl.innerHTML = `<div class="empty-state"><p>No results found. Try another topic.</p></div>`;
+    feedEl.innerHTML = `<div class="empty-state"><p>No results found. Try another topic or sort.</p></div>`;
     return;
   }
 
@@ -511,18 +644,29 @@ function renderCards(cards, topicLabel) {
   cards.forEach((c, i) => {
     const card = document.createElement("div");
     card.className = "card";
-    card.style.animationDelay = `${i * 0.06}s`;
+    card.style.animationDelay = `${i * 0.04}s`;
 
     const meta = [c.source, c.date, c.authors].filter(Boolean).join(" · ");
-    const titleHtml = c.url
-      ? `<a href="${escapeHtml(c.url)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
+
+    const linkUrl = c.is_oa && c.oa_url ? c.oa_url : c.url;
+    const titleHtml = linkUrl
+      ? `<a href="${escapeHtml(linkUrl)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
       : escapeHtml(c.title);
+
+    const citeHtml = c.cited_by_count > 0
+      ? `<span class="cite-count">${c.cited_by_count} citations</span>`
+      : "";
+
+    const oaHtml = c.is_oa ? `<span class="open-access">Open Access</span>` : "";
 
     card.innerHTML = `
       <span class="card-topic">${escapeHtml(topicLabel)}</span>
-      <h3>${titleHtml}</h3>
+      <div class="card-header">
+        <h3>${titleHtml}${oaHtml}</h3>
+        ${citeHtml}
+      </div>
       ${meta ? `<div class="meta">${escapeHtml(meta)}</div>` : ""}
-      <p>${escapeHtml(c.summary || "")}</p>
+      ${c.summary ? `<p>${escapeHtml(c.summary)}</p>` : ""}
     `;
     feedEl.appendChild(card);
   });
@@ -530,8 +674,9 @@ function renderCards(cards, topicLabel) {
 
 // ─── Skeletons ───
 function showSkeletons() {
+  resultInfo.classList.remove("visible");
   feedEl.innerHTML = "";
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     const s = document.createElement("div");
     s.className = "skeleton";
     s.innerHTML = `
