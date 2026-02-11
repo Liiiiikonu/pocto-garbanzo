@@ -17,6 +17,7 @@
     --green: #34d399;
     --amber: #fbbf24;
     --red: #f87171;
+    --orange: #fb923c;
     --radius: 10px;
   }
 
@@ -149,18 +150,45 @@
     cursor: not-allowed;
   }
 
-  /* ── Result count ── */
+  /* ── Result count + refresh bar ── */
   .result-info {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1rem;
     font-size: .8rem;
     color: var(--text-muted);
-    display: none;
   }
 
   .result-info.visible { display: flex; }
+
+  .refresh-bar {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .refresh-timer {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .refresh-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: .2rem .5rem;
+    border-radius: 6px;
+    font-size: .75rem;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .refresh-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .refresh-btn:disabled { opacity: .4; cursor: not-allowed; }
 
   /* ── Feed ── */
   #feed {
@@ -184,8 +212,15 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 1rem;
+    gap: .75rem;
     margin-bottom: .35rem;
+  }
+
+  .card-badges {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    margin-bottom: .5rem;
   }
 
   .card-topic {
@@ -195,7 +230,21 @@
     text-transform: uppercase;
     letter-spacing: .06em;
     color: var(--accent);
-    margin-bottom: .5rem;
+  }
+
+  .badge-hot {
+    display: inline-flex;
+    align-items: center;
+    gap: .2rem;
+    font-size: .65rem;
+    font-weight: 700;
+    color: var(--orange);
+    background: rgba(251, 146, 60, .12);
+    border: 1px solid rgba(251, 146, 60, .25);
+    padding: .1rem .45rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
   }
 
   .card h3 {
@@ -225,6 +274,13 @@
     line-height: 1.65;
   }
 
+  .card-stats {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-shrink: 0;
+  }
+
   .cite-count {
     font-size: .7rem;
     color: var(--amber);
@@ -233,7 +289,6 @@
     padding: .15rem .5rem;
     border-radius: 999px;
     white-space: nowrap;
-    flex-shrink: 0;
   }
 
   .open-access {
@@ -346,9 +401,10 @@
     Research Radar
   </div>
   <div class="header-right">
-    <div class="live-dot" title="Powered by OpenAlex"></div>
-    <span>Powered by OpenAlex</span>
+    <div class="live-dot" title="Live — auto-refreshes every 5 min"></div>
+    <span>Live Feed</span>
     <select class="sort-select" id="sortSelect" title="Sort results">
+      <option value="hot">Hottest</option>
       <option value="recent">Most Recent</option>
       <option value="cited">Most Cited</option>
       <option value="relevant">Most Relevant</option>
@@ -360,7 +416,7 @@
 <main>
   <div class="intro">
     <h2>Live Research Feed</h2>
-    <p>Click a topic to pull the latest papers from OpenAlex — no API key needed.</p>
+    <p>Real-time papers from OpenAlex. Auto-refreshes every 5 minutes — no API key needed.</p>
   </div>
 
   <!-- Topics -->
@@ -369,10 +425,13 @@
   <!-- Error banner -->
   <div class="error-banner" id="errorBanner"></div>
 
-  <!-- Result info -->
+  <!-- Result info + refresh -->
   <div class="result-info" id="resultInfo">
     <span id="resultCount"></span>
-    <span id="resultSource"></span>
+    <div class="refresh-bar">
+      <span class="refresh-timer" id="refreshTimer"></span>
+      <button class="refresh-btn" id="refreshBtn" title="Refresh now">Refresh</button>
+    </div>
   </div>
 
   <!-- Feed -->
@@ -406,11 +465,11 @@ const TOPICS = [
   },
   {
     label: "ML for Materials",
-    search: "machine learning materials science",
+    search: "machine learning materials science materials discovery",
   },
   {
     label: "AI in Science",
-    search: "artificial intelligence scientific discovery",
+    search: "artificial intelligence scientific discovery research",
   },
   {
     label: "Engineering Physics",
@@ -424,33 +483,92 @@ const TOPICS = [
 ];
 
 const OPENALEX_BASE = "https://api.openalex.org/works";
-const PER_PAGE = 15;
+const PER_PAGE = 25;           // Fetch more, then rank locally
+const DISPLAY_COUNT = 15;      // Show the top N after scoring
+const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 // ─── State ───
 let activeTopic = null;
 let loading = false;
 const cache = {};
+let refreshCountdown = null;
+let refreshIntervalId = null;
+let countdownIntervalId = null;
 
 // ─── DOM refs ───
-const topicsEl    = document.getElementById("topics");
-const feedEl      = document.getElementById("feed");
-const errorBanner = document.getElementById("errorBanner");
-const sortSelect  = document.getElementById("sortSelect");
-const resultInfo  = document.getElementById("resultInfo");
-const resultCount = document.getElementById("resultCount");
-const resultSource = document.getElementById("resultSource");
+const topicsEl     = document.getElementById("topics");
+const feedEl       = document.getElementById("feed");
+const errorBanner  = document.getElementById("errorBanner");
+const sortSelect   = document.getElementById("sortSelect");
+const resultInfo   = document.getElementById("resultInfo");
+const resultCount  = document.getElementById("resultCount");
+const refreshTimer = document.getElementById("refreshTimer");
+const refreshBtn   = document.getElementById("refreshBtn");
 
 // ─── Init ───
 (function init() {
   renderTopics();
+
   sortSelect.addEventListener("change", () => {
     if (activeTopic !== null) {
-      // Clear cache for this topic so it re-fetches with new sort
-      delete cache[TOPICS[activeTopic].label + sortSelect.value];
+      // Bust cache for this sort and re-fetch
+      delete cache[cacheKeyFor(activeTopic)];
       selectTopic(activeTopic);
     }
   });
+
+  refreshBtn.addEventListener("click", () => {
+    if (activeTopic !== null && !loading) {
+      forceRefresh();
+    }
+  });
+
+  // Auto-load "Trending in MatSci" on page open
+  selectTopic(5);
 })();
+
+function cacheKeyFor(index) {
+  return TOPICS[index].label + "|" + sortSelect.value;
+}
+
+// ─── Auto-refresh ───
+function startAutoRefresh() {
+  stopAutoRefresh();
+  refreshCountdown = REFRESH_INTERVAL / 1000;
+  updateCountdownDisplay();
+
+  countdownIntervalId = setInterval(() => {
+    refreshCountdown--;
+    updateCountdownDisplay();
+  }, 1000);
+
+  refreshIntervalId = setTimeout(() => {
+    forceRefresh();
+  }, REFRESH_INTERVAL);
+}
+
+function stopAutoRefresh() {
+  clearTimeout(refreshIntervalId);
+  clearInterval(countdownIntervalId);
+  refreshIntervalId = null;
+  countdownIntervalId = null;
+}
+
+function updateCountdownDisplay() {
+  if (refreshCountdown <= 0) {
+    refreshTimer.textContent = "refreshing...";
+    return;
+  }
+  const m = Math.floor(refreshCountdown / 60);
+  const s = refreshCountdown % 60;
+  refreshTimer.textContent = `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function forceRefresh() {
+  if (activeTopic === null || loading) return;
+  delete cache[cacheKeyFor(activeTopic)];
+  selectTopic(activeTopic);
+}
 
 // ─── Render topic pills ───
 function renderTopics() {
@@ -470,6 +588,7 @@ function updatePillStates() {
     p.classList.toggle("active", i === activeTopic);
     p.disabled = loading;
   });
+  refreshBtn.disabled = loading;
 }
 
 // ─── Select topic ───
@@ -480,12 +599,13 @@ async function selectTopic(index) {
   activeTopic = index;
   const topic = TOPICS[index];
   const sort = sortSelect.value;
+  const key = cacheKeyFor(index);
 
-  // Check cache (10 min TTL)
-  const cacheKey = topic.label + sort;
-  if (cache[cacheKey] && Date.now() - cache[cacheKey].ts < 10 * 60 * 1000) {
-    renderCards(cache[cacheKey].cards, topic.label, cache[cacheKey].totalCount);
+  // Check cache (use refresh interval as TTL)
+  if (cache[key] && Date.now() - cache[key].ts < REFRESH_INTERVAL) {
+    renderCards(cache[key].cards, topic.label, cache[key].totalCount);
     updatePillStates();
+    startAutoRefresh();
     return;
   }
 
@@ -495,8 +615,9 @@ async function selectTopic(index) {
 
   try {
     const { papers, totalCount } = await fetchFromOpenAlex(topic, sort);
-    cache[cacheKey] = { cards: papers, ts: Date.now(), totalCount };
+    cache[key] = { cards: papers, ts: Date.now(), totalCount };
     renderCards(papers, topic.label, totalCount);
+    startAutoRefresh();
   } catch (err) {
     showError(err.message || "Something went wrong.");
     feedEl.innerHTML = "";
@@ -513,15 +634,14 @@ function buildOpenAlexUrl(topic, sort) {
   params.set("per_page", PER_PAGE);
   params.set("mailto", "research-radar@users.noreply.github.com");
 
-  // Date filter: last 12 months
+  // Date filter: last 6 months for freshness
   const now = new Date();
-  const yearAgo = new Date(now);
-  yearAgo.setFullYear(yearAgo.getFullYear() - 1);
-  const fromDate = yearAgo.toISOString().split("T")[0];
+  const sixMonthsAgo = new Date(now);
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  const fromDate = sixMonthsAgo.toISOString().split("T")[0];
 
-  let filter = `from_publication_date:${fromDate}`;
+  let filter = `from_publication_date:${fromDate},type:article|review`;
 
-  // If topic has a concept ID, use it for better precision
   if (topic.concepts) {
     filter += `,concepts.id:${topic.concepts}`;
   }
@@ -529,8 +649,11 @@ function buildOpenAlexUrl(topic, sort) {
   params.set("filter", filter);
   params.set("search", topic.search);
 
-  // Sort
+  // API-level sort — for "hot" we fetch by citations then re-rank locally
   switch (sort) {
+    case "hot":
+      params.set("sort", "cited_by_count:desc");
+      break;
     case "cited":
       params.set("sort", "cited_by_count:desc");
       break;
@@ -558,7 +681,7 @@ async function fetchFromOpenAlex(topic, sort) {
   const data = await resp.json();
   const totalCount = data.meta?.count || 0;
 
-  const papers = (data.results || []).map(work => {
+  let papers = (data.results || []).map(work => {
     // Authors
     const authors = (work.authorships || [])
       .slice(0, 4)
@@ -581,7 +704,7 @@ async function fetchFromOpenAlex(topic, sort) {
     const source = work.primary_location?.source?.display_name || "";
 
     // Publication date
-    const date = work.publication_date || "";
+    const pubDate = work.publication_date || "";
 
     // Abstract
     let abstract = "";
@@ -593,18 +716,35 @@ async function fetchFromOpenAlex(topic, sort) {
     const isOA = work.open_access?.is_oa || false;
     const oaUrl = work.open_access?.oa_url || "";
 
+    // Citation velocity: citations per day since publication
+    const citedBy = work.cited_by_count || 0;
+    let velocity = 0;
+    if (pubDate && citedBy > 0) {
+      const daysSince = Math.max(1, (Date.now() - new Date(pubDate).getTime()) / 86400000);
+      velocity = citedBy / daysSince;
+    }
+
     return {
       title: work.display_name || work.title || "Untitled",
       url,
       authors: authors + authorSuffix,
       source,
-      date,
+      date: pubDate,
       summary: abstract,
-      cited_by_count: work.cited_by_count || 0,
+      cited_by_count: citedBy,
+      velocity,
       is_oa: isOA,
       oa_url: oaUrl,
     };
   });
+
+  // For "hot" sort: re-rank by citation velocity (citations/day)
+  if (sort === "hot") {
+    papers.sort((a, b) => b.velocity - a.velocity);
+  }
+
+  // Take top N
+  papers = papers.slice(0, DISPLAY_COUNT);
 
   return { papers, totalCount };
 }
@@ -619,19 +759,26 @@ function reconstructAbstract(invertedIndex) {
     }
   }
   const text = words.join(" ");
-  // Truncate to ~300 chars
   if (text.length > 300) {
     return text.slice(0, 300).replace(/\s\S*$/, "") + "...";
   }
   return text;
 }
 
+// ─── Compute "hot" threshold for badges ───
+function computeHotThreshold(cards) {
+  if (!cards.length) return Infinity;
+  const velocities = cards.map(c => c.velocity).filter(v => v > 0);
+  if (!velocities.length) return Infinity;
+  velocities.sort((a, b) => b - a);
+  // Top 30% get the badge
+  return velocities[Math.max(0, Math.floor(velocities.length * 0.3) - 1)] || velocities[0];
+}
+
 // ─── Render cards ───
 function renderCards(cards, topicLabel, totalCount) {
-  // Result info bar
   if (totalCount !== undefined) {
-    resultCount.textContent = `${cards.length} of ${totalCount.toLocaleString()} results`;
-    resultSource.textContent = `Last 12 months via OpenAlex`;
+    resultCount.textContent = `${cards.length} of ${totalCount.toLocaleString()} results · last 6 months`;
     resultInfo.classList.add("visible");
   }
 
@@ -639,6 +786,8 @@ function renderCards(cards, topicLabel, totalCount) {
     feedEl.innerHTML = `<div class="empty-state"><p>No results found. Try another topic or sort.</p></div>`;
     return;
   }
+
+  const hotThreshold = computeHotThreshold(cards);
 
   feedEl.innerHTML = "";
   cards.forEach((c, i) => {
@@ -653,17 +802,23 @@ function renderCards(cards, topicLabel, totalCount) {
       ? `<a href="${escapeHtml(linkUrl)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
       : escapeHtml(c.title);
 
+    const isHot = c.velocity >= hotThreshold && c.velocity > 0;
+    const hotBadge = isHot ? `<span class="badge-hot">HOT</span>` : "";
+
     const citeHtml = c.cited_by_count > 0
-      ? `<span class="cite-count">${c.cited_by_count} citations</span>`
+      ? `<span class="cite-count">${c.cited_by_count} cited</span>`
       : "";
 
     const oaHtml = c.is_oa ? `<span class="open-access">Open Access</span>` : "";
 
     card.innerHTML = `
-      <span class="card-topic">${escapeHtml(topicLabel)}</span>
+      <div class="card-badges">
+        <span class="card-topic">${escapeHtml(topicLabel)}</span>
+        ${hotBadge}
+      </div>
       <div class="card-header">
         <h3>${titleHtml}${oaHtml}</h3>
-        ${citeHtml}
+        <div class="card-stats">${citeHtml}</div>
       </div>
       ${meta ? `<div class="meta">${escapeHtml(meta)}</div>` : ""}
       ${c.summary ? `<p>${escapeHtml(c.summary)}</p>` : ""}
