@@ -7,74 +7,96 @@
     </filter>
   </defs>
 
-  <!-- Background -->
   <rect width="1200" height="630" fill="#101010"/>
   <rect width="1200" height="630" fill="#101010" filter="url(#grain)" opacity="0.04"/>
 
-  <!-- Subtle warm glow -->
-  <ellipse cx="200" cy="300" rx="400" ry="300" fill="#c8a47e" opacity="0.03"/>
-
-  <!-- Top rule -->
-  <rect x="80" y="80" width="40" height="2" fill="#c8a47e"/>
+  <!-- Masthead rule -->
+  <rect x="80" y="70" width="1040" height="1" fill="#2a2a2a"/>
 
   <!-- Wordmark -->
-  <text x="80" y="130" font-family="Georgia, 'Newsreader', serif" font-size="22" font-weight="700" fill="#e0ddd8" letter-spacing="-0.5">Research Radar</text>
+  <text x="80" y="55" font-family="Georgia, 'Newsreader', serif" font-size="18" font-weight="700" fill="#e0ddd8" letter-spacing="-0.5">Research Radar</text>
+  <circle cx="220" cy="49" r="3" fill="#6b9e78"/>
 
-  <!-- Live dot -->
-  <circle cx="260" cy="124" r="4" fill="#6b9e78"/>
+  <!-- Edition line -->
+  <text x="250" y="55" font-family="Inter, sans-serif" font-size="9" fill="#4a4740" letter-spacing="1.5">MATERIALS SCIENCE INTELLIGENCE BRIEFING</text>
 
-  <!-- Main headline -->
-  <text x="80" y="250" font-family="Georgia, 'Newsreader', serif" font-size="72" font-weight="700" fill="#e0ddd8" letter-spacing="-2">Discover Research</text>
-  <text x="80" y="335" font-family="Georgia, 'Newsreader', serif" font-size="72" font-weight="700" fill="#e0ddd8" letter-spacing="-2">That Matters</text>
+  <!-- Period tabs -->
+  <text x="80" y="100" font-family="Inter, sans-serif" font-size="11" fill="#c8a47e" font-weight="600" letter-spacing="0.5">THIS WEEK</text>
+  <rect x="80" y="106" width="72" height="2" fill="#c8a47e"/>
+  <text x="175" y="100" font-family="Inter, sans-serif" font-size="11" fill="#4a4740" letter-spacing="0.5">30 DAYS</text>
+  <text x="260" y="100" font-family="Inter, sans-serif" font-size="11" fill="#4a4740" letter-spacing="0.5">THIS YEAR</text>
+  <text x="350" y="100" font-family="Inter, sans-serif" font-size="11" fill="#4a4740" letter-spacing="0.5">LATEST</text>
 
-  <!-- Subtitle -->
-  <text x="80" y="390" font-family="Inter, -apple-system, sans-serif" font-size="20" fill="#706b63">Papers ranked by citation velocity. Powered by OpenAlex.</text>
+  <rect x="80" y="120" width="1040" height="1" fill="#2a2a2a"/>
 
-  <!-- Metrics row -->
-  <line x1="80" y1="430" x2="700" y2="430" stroke="#2a2a2a" stroke-width="1"/>
+  <!-- Headline eyebrow -->
+  <text x="80" y="160" font-family="Inter, sans-serif" font-size="10" fill="#c8a47e" font-weight="600" letter-spacing="1.5">THIS WEEK'S FASTEST ACCELERATING PAPER</text>
 
-  <!-- Metric 1 -->
-  <text x="80" y="470" font-family="'JetBrains Mono', monospace" font-size="28" font-weight="500" fill="#c8a47e">15</text>
-  <text x="80" y="492" font-family="Inter, sans-serif" font-size="11" fill="#4a4740" letter-spacing="1" text-transform="uppercase">PAPERS</text>
+  <!-- Headline -->
+  <text x="80" y="210" font-family="Georgia, 'Newsreader', serif" font-size="38" font-weight="700" fill="#e0ddd8" letter-spacing="-1">A Living Research Intelligence</text>
+  <text x="80" y="255" font-family="Georgia, 'Newsreader', serif" font-size="38" font-weight="700" fill="#e0ddd8" letter-spacing="-1">Briefing. Not a Dashboard.</text>
 
-  <!-- Metric 2 -->
-  <text x="200" y="470" font-family="'JetBrains Mono', monospace" font-size="28" font-weight="500" fill="#c8a47e">847</text>
-  <text x="200" y="492" font-family="Inter, sans-serif" font-size="11" fill="#4a4740" letter-spacing="1">CITATIONS</text>
+  <!-- Insight line -->
+  <text x="80" y="300" font-family="Inter, sans-serif" font-size="14" fill="#a09a90">Citation velocity. Cross-disciplinary signals. Institutional clusters.</text>
+  <text x="80" y="322" font-family="Inter, sans-serif" font-size="14" fill="#a09a90">Computed from real-time data. Powered by OpenAlex.</text>
 
-  <!-- Metric 3 -->
-  <text x="360" y="470" font-family="'JetBrains Mono', monospace" font-size="28" font-weight="500" fill="#c8a47e">73%</text>
-  <text x="360" y="492" font-family="Inter, sans-serif" font-size="11" fill="#4a4740" letter-spacing="1">OPEN ACCESS</text>
+  <!-- Headline indicators -->
+  <rect x="80" y="350" width="1040" height="1" fill="#c8a47e" opacity="0.5"/>
 
-  <!-- Metric 4 -->
-  <text x="530" y="470" font-family="'JetBrains Mono', monospace" font-size="28" font-weight="500" fill="#c8a47e">4.2</text>
-  <text x="530" y="492" font-family="Inter, sans-serif" font-size="11" fill="#4a4740" letter-spacing="1">AVG VELOCITY</text>
+  <text x="80" y="385" font-family="Inter, sans-serif" font-size="8" fill="#4a4740" letter-spacing="1">MOMENTUM</text>
+  <text x="80" y="405" font-family="'JetBrains Mono', monospace" font-size="20" fill="#c8a47e" font-weight="500">99</text>
+  <rect x="80" y="415" width="60" height="3" rx="1" fill="#242424"/>
+  <rect x="80" y="415" width="59" height="3" rx="1" fill="#c8a47e"/>
 
-  <line x1="80" y1="510" x2="700" y2="510" stroke="#2a2a2a" stroke-width="1"/>
+  <text x="200" y="385" font-family="Inter, sans-serif" font-size="8" fill="#4a4740" letter-spacing="1">CITATIONS</text>
+  <text x="200" y="405" font-family="'JetBrains Mono', monospace" font-size="20" fill="#e0ddd8" font-weight="500">1,247</text>
 
-  <!-- Right side: abstract citation distribution bars -->
-  <rect x="880" y="160" width="12" height="120" rx="1" fill="#c8a47e" opacity="0.5"/>
-  <rect x="900" y="200" width="12" height="80" rx="1" fill="#c8a47e" opacity="0.35"/>
-  <rect x="920" y="220" width="12" height="60" rx="1" fill="#c8a47e" opacity="0.25"/>
-  <rect x="940" y="190" width="12" height="90" rx="1" fill="#c8a47e" opacity="0.3"/>
-  <rect x="960" y="240" width="12" height="40" rx="1" fill="#c8a47e" opacity="0.2"/>
-  <rect x="980" y="250" width="12" height="30" rx="1" fill="#c8a47e" opacity="0.15"/>
-  <rect x="1000" y="255" width="12" height="25" rx="1" fill="#c8a47e" opacity="0.12"/>
-  <rect x="1020" y="260" width="12" height="20" rx="1" fill="#c8a47e" opacity="0.1"/>
-  <rect x="1040" y="265" width="12" height="15" rx="1" fill="#c8a47e" opacity="0.08"/>
-  <rect x="1060" y="268" width="12" height="12" rx="1" fill="#c8a47e" opacity="0.06"/>
+  <text x="340" y="385" font-family="Inter, sans-serif" font-size="8" fill="#4a4740" letter-spacing="1">VELOCITY</text>
+  <text x="340" y="405" font-family="'JetBrains Mono', monospace" font-size="20" fill="#e0ddd8" font-weight="500">8.3/d</text>
 
-  <text x="880" y="300" font-family="Inter, sans-serif" font-size="10" fill="#4a4740" letter-spacing="1">CITATION DIST.</text>
+  <text x="470" y="385" font-family="Inter, sans-serif" font-size="8" fill="#4a4740" letter-spacing="1">IMPACT</text>
+  <text x="470" y="405" font-family="'JetBrains Mono', monospace" font-size="20" fill="#e0ddd8" font-weight="500">Top 2%</text>
 
-  <!-- Topics (text, no pills) -->
-  <text x="880" y="380" font-family="Inter, sans-serif" font-size="10" fill="#4a4740" letter-spacing="1">TOPICS</text>
-  <text x="880" y="405" font-family="Inter, sans-serif" font-size="14" fill="#a09a90">High-Entropy Alloys</text>
-  <text x="880" y="428" font-family="Inter, sans-serif" font-size="14" fill="#a09a90">Electrocatalysis</text>
-  <text x="880" y="451" font-family="Inter, sans-serif" font-size="14" fill="#a09a90">ML for Materials</text>
-  <text x="880" y="474" font-family="Inter, sans-serif" font-size="14" fill="#a09a90">AI in Science</text>
+  <text x="600" y="385" font-family="Inter, sans-serif" font-size="8" fill="#4a4740" letter-spacing="1">ACCESS</text>
+  <text x="600" y="405" font-family="'JetBrains Mono', monospace" font-size="20" fill="#6b9e78" font-weight="500">Open</text>
 
-  <!-- Bottom accent line -->
-  <rect x="0" y="626" width="1200" height="4" fill="#c8a47e" opacity="0.4"/>
+  <!-- Column separators -->
+  <rect x="80" y="440" width="1040" height="1" fill="#2a2a2a"/>
+  <line x1="420" y1="450" x2="420" y2="580" stroke="#1c1c1c" stroke-width="1"/>
+  <line x1="840" y1="450" x2="840" y2="580" stroke="#1c1c1c" stroke-width="1"/>
 
-  <!-- URL -->
-  <text x="80" y="570" font-family="'JetBrains Mono', monospace" font-size="13" fill="#4a4740">liiiiikonu.github.io/pocto-garbanzo</text>
+  <!-- Left col heading -->
+  <text x="80" y="470" font-family="Inter, sans-serif" font-size="8" fill="#4a4740" letter-spacing="1.5">QUICK SIGNALS</text>
+  <text x="80" y="498" font-family="Georgia, serif" font-size="13" fill="#e0ddd8" font-weight="600">High-Entropy Alloys for Energy</text>
+  <text x="80" y="514" font-family="'JetBrains Mono', monospace" font-size="10" fill="#c8a47e">M:87</text>
+  <text x="120" y="514" font-family="'JetBrains Mono', monospace" font-size="10" fill="#4a4740">234 cited</text>
+
+  <text x="80" y="540" font-family="Georgia, serif" font-size="13" fill="#e0ddd8" font-weight="600">ML-Guided Catalyst Discovery</text>
+  <text x="80" y="556" font-family="'JetBrains Mono', monospace" font-size="10" fill="#c8a47e">M:72</text>
+  <text x="120" y="556" font-family="'JetBrains Mono', monospace" font-size="10" fill="#4a4740">156 cited</text>
+
+  <!-- Center col heading -->
+  <text x="440" y="470" font-family="Inter, sans-serif" font-size="8" fill="#4a4740" letter-spacing="1.5">DEEP READS</text>
+  <text x="440" y="498" font-family="Georgia, serif" font-size="13" fill="#e0ddd8" font-weight="600">Perovskite Stability Under Stress</text>
+  <text x="440" y="516" font-family="Inter, sans-serif" font-size="10" fill="#706b63">Nature Materials &middot; Feb 2026</text>
+  <text x="440" y="536" font-family="Inter, sans-serif" font-size="10" fill="#a09a90">Abstract preview of the paper</text>
+  <text x="440" y="550" font-family="Inter, sans-serif" font-size="10" fill="#a09a90">showing key research findings...</text>
+
+  <!-- Right col heading -->
+  <text x="860" y="470" font-family="Inter, sans-serif" font-size="8" fill="#4a4740" letter-spacing="1.5">FIELD PULSE</text>
+
+  <text x="860" y="498" font-family="Inter, sans-serif" font-size="10" fill="#4a4740">Avg velocity</text>
+  <text x="1060" y="498" font-family="'JetBrains Mono', monospace" font-size="12" fill="#e0ddd8" text-anchor="end">3.2/d</text>
+
+  <text x="860" y="518" font-family="Inter, sans-serif" font-size="10" fill="#4a4740">Total citations</text>
+  <text x="1060" y="518" font-family="'JetBrains Mono', monospace" font-size="12" fill="#e0ddd8" text-anchor="end">8,471</text>
+
+  <text x="860" y="538" font-family="Inter, sans-serif" font-size="10" fill="#4a4740">Open access</text>
+  <text x="1060" y="538" font-family="'JetBrains Mono', monospace" font-size="12" fill="#e0ddd8" text-anchor="end">73%</text>
+
+  <text x="860" y="558" font-family="Inter, sans-serif" font-size="10" fill="#4a4740">Institutions</text>
+  <text x="1060" y="558" font-family="'JetBrains Mono', monospace" font-size="12" fill="#e0ddd8" text-anchor="end">42</text>
+
+  <!-- Bottom accent -->
+  <rect x="0" y="626" width="1200" height="4" fill="#c8a47e" opacity="0.35"/>
 </svg>
